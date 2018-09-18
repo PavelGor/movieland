@@ -110,10 +110,10 @@ public class DefaultMovieServiceTest {
         assertEquals(expectedFirstMovie.getCountries().get(0), actualFirstMovie.getCountries().get(0));
         assertEquals(expectedSecondMovie.getCountries().get(0), actualSecondMovie.getCountries().get(0));
 
-//        assertTrue(actualFirstMovie.getGenres().size() == 2);
-//        assertTrue(expectedSecondMovie.getGenres().size() == 5);
-//        assertEquals(expectedFirstMovie.getGenres().get(0), actualFirstMovie.getGenres().get(0));
-//        assertEquals(expectedSecondMovie.getGenres().get(0), actualSecondMovie.getGenres().get(0));
+        assertTrue(actualFirstMovie.getGenres().size() == 2);
+        assertTrue(expectedSecondMovie.getGenres().size() == 5);
+        assertEquals(expectedFirstMovie.getGenres().get(0), actualFirstMovie.getGenres().get(0));
+        assertEquals(expectedSecondMovie.getGenres().get(0), actualSecondMovie.getGenres().get(0));
     }
 
     @Test

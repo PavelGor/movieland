@@ -31,6 +31,7 @@ public class MovieControllerTest {
 
     @Autowired
     private DefaultMovieService movieService;
+
     @Autowired
     private MovieController controller;
 
@@ -74,8 +75,8 @@ public class MovieControllerTest {
         secondMovie.setRating(8.6);
         secondMovie.setPrice(130.0);
         secondMovie.setPicturePath("https://images-na.ssl-images-amazon.com/images/M/MV5BMjAxMzY3NjcxNF5BMl5BanBnXkFtZTcwNTI5OTM0Mw@@._V1._SY209_CR0,0,140,209_.jpg");
-        countries.add("Великобритания");
         countries.add("США");
+        countries.add("Великобритания");
         genres.add("фантастика");
         genres.add("боевик");
         genres.add("триллер");
@@ -101,7 +102,7 @@ public class MovieControllerTest {
                 .andExpect(jsonPath("$[0].price", is(expectedFirstMovie.getPrice())))
                 .andExpect(jsonPath("$[0].picturePath", is(expectedFirstMovie.getPicturePath())))
                 .andExpect(jsonPath("$[0].countries", is(expectedFirstMovie.getCountries())))
-//                .andExpect(jsonPath("$[0].genres", is(expectedFirstMovie.getGenres())))
+                .andExpect(jsonPath("$[0].genres", is(expectedFirstMovie.getGenres())))
                 .andExpect(jsonPath("$[5].id", is(expectedSecondMovie.getId())))
                 .andExpect(jsonPath("$[5].nameRussian", is(expectedSecondMovie.getNameRussian())))
                 .andExpect(jsonPath("$[5].nameNative", is(expectedSecondMovie.getNameNative())))
@@ -109,11 +110,9 @@ public class MovieControllerTest {
                 .andExpect(jsonPath("$[5].description", is(expectedSecondMovie.getDescription())))
                 .andExpect(jsonPath("$[5].rating", is(expectedSecondMovie.getRating())))
                 .andExpect(jsonPath("$[5].price", is(expectedSecondMovie.getPrice())))
-                .andExpect(jsonPath("$[5].picturePath", is(expectedSecondMovie.getPicturePath())));
-//                .andExpect(jsonPath("$[5].countries", is(expectedSecondMovie.getCountries())));
-//                .andExpect(jsonPath("$[1].genres", is(expectedSecondMovie.getGenres())));
-
-//                .andExpect(content().contentType(TestUtil.APPLICATION_JSON_UTF8))
+                .andExpect(jsonPath("$[5].picturePath", is(expectedSecondMovie.getPicturePath())))
+                .andExpect(jsonPath("$[5].countries", is(expectedSecondMovie.getCountries())))
+                .andExpect(jsonPath("$[5].genres", is(expectedSecondMovie.getGenres())));
 
     }
 

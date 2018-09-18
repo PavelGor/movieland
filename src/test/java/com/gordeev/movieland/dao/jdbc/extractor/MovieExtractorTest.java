@@ -63,7 +63,7 @@ public class MovieExtractorTest {
         assertEquals(price, expectedMovie.getPrice(), 0.001);
         assertEquals(picturePath, expectedMovie.getPicturePath());
         assertEquals(country, expectedMovie.getCountries().get(0));
-//        assertEquals(genryOne, expectedMovie.getGenres().get(0));
-//        assertEquals(genryTwo, expectedMovie.getGenres().get(1));
+        assertEquals(genryOne, expectedMovie.getGenres().get(0));
+        assertEquals(genryTwo, expectedMovie.getGenres().get(1));
     }
 }
