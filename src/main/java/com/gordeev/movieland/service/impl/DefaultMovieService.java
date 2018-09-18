@@ -1,6 +1,7 @@
 package com.gordeev.movieland.service.impl;
 
 import com.gordeev.movieland.dao.MovieDao;
+import com.gordeev.movieland.entity.Genre;
 import com.gordeev.movieland.entity.Movie;
 import com.gordeev.movieland.service.MovieService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,5 +38,10 @@ public class DefaultMovieService implements MovieService{
         }
 
         return threeRandomMovie;
+    }
+
+    @Override
+    public List<Genre> getAllGenre() {
+        return movieDao.getAllGenre();
     }
 }

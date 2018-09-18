@@ -1,5 +1,6 @@
 package com.gordeev.movieland.controller;
 
+import com.gordeev.movieland.entity.Genre;
 import com.gordeev.movieland.entity.Movie;
 import com.gordeev.movieland.service.MovieService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,4 +33,11 @@ public class MovieController {
     protected List<Movie> getThreeRandomMovie() {
         return movieService.getThreeRandomMovie();
     }
+
+    @RequestMapping(value = "/genre", method = RequestMethod.GET)
+    @ResponseBody
+    protected List<Genre> getAllGenre() {
+        return movieService.getAllGenre();
+    }
+
 }

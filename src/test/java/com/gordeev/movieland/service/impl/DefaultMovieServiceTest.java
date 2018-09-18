@@ -1,5 +1,6 @@
 package com.gordeev.movieland.service.impl;
 
+import com.gordeev.movieland.entity.Genre;
 import com.gordeev.movieland.entity.Movie;
 import org.junit.Before;
 import org.junit.Test;
@@ -120,5 +121,24 @@ public class DefaultMovieServiceTest {
         List<Movie> actualMovies = movieService.getThreeRandomMovie();
 
         assertTrue(actualMovies.size() == 3);
+    }
+
+    @Test
+    public void getAllGenre() {
+        Genre firstGenre = new Genre();
+        firstGenre.setId(1);
+        firstGenre.setName("драма");
+        Genre secondGenre = new Genre();
+        secondGenre.setId(2);
+        secondGenre.setName("криминал");
+
+        List<Genre> genres = movieService.getAllGenre();
+
+        assertTrue(!genres.isEmpty());
+        assertEquals(firstGenre.getId(),genres.get(0).getId());
+        assertEquals(secondGenre.getId(),genres.get(1).getId());
+
+        assertEquals(firstGenre.getName(),genres.get(0).getName());
+        assertEquals(secondGenre.getName(),genres.get(1).getName());
     }
 }

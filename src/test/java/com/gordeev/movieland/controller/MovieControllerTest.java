@@ -1,5 +1,6 @@
 package com.gordeev.movieland.controller;
 
+import com.gordeev.movieland.entity.Genre;
 import com.gordeev.movieland.entity.Movie;
 import com.gordeev.movieland.service.impl.DefaultMovieService;
 import org.junit.Before;
@@ -122,5 +123,23 @@ public class MovieControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(3)));
 
+    }
+
+    @Test
+    public void getAllGenre() throws Exception {
+        Genre firstGenre = new Genre();
+        firstGenre.setId(1);
+        firstGenre.setName("драма");
+        Genre secondGenre = new Genre();
+        secondGenre.setId(2);
+        secondGenre.setName("криминал");
+
+        mockMvc.perform(get("/v1/genre"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", hasSize(15)))
+                .andExpect(jsonPath("$[0].id", is(firstGenre.getId())))
+                .andExpect(jsonPath("$[0].name", is(firstGenre.getName())))
+                .andExpect(jsonPath("$[1].id", is(secondGenre.getId())))
+                .andExpect(jsonPath("$[1].name", is(secondGenre.getName())));
     }
 }
