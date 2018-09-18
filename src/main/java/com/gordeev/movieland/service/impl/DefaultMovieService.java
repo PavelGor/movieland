@@ -8,10 +8,12 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 @Service
 public class DefaultMovieService implements MovieService{
     private MovieDao movieDao;
+    private Random randomGenerator = new Random();
 
     @Autowired
     public DefaultMovieService(MovieDao movieDao) {
@@ -21,5 +23,19 @@ public class DefaultMovieService implements MovieService{
     @Override
     public List<Movie> getAllMovie() {
         return movieDao.getAllMovie();
+    }
+
+    @Override
+    public List<Movie> getThreeRandomMovie() {
+        List<Movie> allMovies = movieDao.getAllMovie();
+        List<Movie> threeRandomMovie = new ArrayList<>();
+
+        for (int i = 0; i < 3; i++) {
+            int index = randomGenerator.nextInt(allMovies.size());
+            threeRandomMovie.add(allMovies.get(index));
+            allMovies.remove(index);
+        }
+
+        return threeRandomMovie;
     }
 }

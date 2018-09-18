@@ -65,7 +65,7 @@ public class MovieControllerTest {
         //Second movie setUp
         countries = new ArrayList<>();
         genres = new ArrayList<>();
-        secondMovie.setId(2);
+        secondMovie.setId(6);
         secondMovie.setNameRussian("Начало");
         secondMovie.setNameNative("Inception");
         secondMovie.setYearOfRelease(2010);
@@ -90,7 +90,7 @@ public class MovieControllerTest {
         Movie expectedSecondMovie = expectedMovies.get(1);
         mockMvc.perform(get("/v1/movie"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$", hasSize(2)))
+                .andExpect(jsonPath("$", hasSize(25)))
                 .andExpect(jsonPath("$[0].id", is(expectedFirstMovie.getId())))
                 .andExpect(jsonPath("$[0].nameRussian", is(expectedFirstMovie.getNameRussian())))
                 .andExpect(jsonPath("$[0].nameNative", is(expectedFirstMovie.getNameNative())))
@@ -101,18 +101,26 @@ public class MovieControllerTest {
                 .andExpect(jsonPath("$[0].picturePath", is(expectedFirstMovie.getPicturePath())))
                 .andExpect(jsonPath("$[0].countries", is(expectedFirstMovie.getCountries())))
 //                .andExpect(jsonPath("$[0].genres", is(expectedFirstMovie.getGenres())))
-                .andExpect(jsonPath("$[1].id", is(expectedSecondMovie.getId())))
-                .andExpect(jsonPath("$[1].nameRussian", is(expectedSecondMovie.getNameRussian())))
-                .andExpect(jsonPath("$[1].nameNative", is(expectedSecondMovie.getNameNative())))
-                .andExpect(jsonPath("$[1].yearOfRelease", is(expectedSecondMovie.getYearOfRelease())))
-                .andExpect(jsonPath("$[1].description", is(expectedSecondMovie.getDescription())))
-                .andExpect(jsonPath("$[1].rating", is(expectedSecondMovie.getRating())))
-                .andExpect(jsonPath("$[1].price", is(expectedSecondMovie.getPrice())))
-                .andExpect(jsonPath("$[1].picturePath", is(expectedSecondMovie.getPicturePath())))
-                .andExpect(jsonPath("$[1].countries", is(expectedSecondMovie.getCountries())));
+                .andExpect(jsonPath("$[5].id", is(expectedSecondMovie.getId())))
+                .andExpect(jsonPath("$[5].nameRussian", is(expectedSecondMovie.getNameRussian())))
+                .andExpect(jsonPath("$[5].nameNative", is(expectedSecondMovie.getNameNative())))
+                .andExpect(jsonPath("$[5].yearOfRelease", is(expectedSecondMovie.getYearOfRelease())))
+                .andExpect(jsonPath("$[5].description", is(expectedSecondMovie.getDescription())))
+                .andExpect(jsonPath("$[5].rating", is(expectedSecondMovie.getRating())))
+                .andExpect(jsonPath("$[5].price", is(expectedSecondMovie.getPrice())))
+                .andExpect(jsonPath("$[5].picturePath", is(expectedSecondMovie.getPicturePath())));
+//                .andExpect(jsonPath("$[5].countries", is(expectedSecondMovie.getCountries())));
 //                .andExpect(jsonPath("$[1].genres", is(expectedSecondMovie.getGenres())));
 
 //                .andExpect(content().contentType(TestUtil.APPLICATION_JSON_UTF8))
+
+    }
+
+    @Test
+    public void testGetThreeRandomMovie() throws Exception {
+        mockMvc.perform(get("/v1/movie/random"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", hasSize(3)));
 
     }
 }
