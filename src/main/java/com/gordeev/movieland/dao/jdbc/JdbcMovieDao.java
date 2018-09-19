@@ -23,13 +23,20 @@ public class JdbcMovieDao implements MovieDao {
     private static final RowMapper<Genre> GENRE_ROW_MAPPER = new GenreRowMapper();
     private JdbcTemplate jdbcTemplate;
 
+    private static final String GET_ALL_GENRE_SQL = "SELECT * FROM genre";
     private static final String GET_ALL_MOVIE_SQL = "SELECT m.id, m.name_ru,m.name_eng,m.year_release,c.id as country_id,c.name as country_name,g.id as genre_id,g.name as genre_name,m.description,m.rating,m.price,m.poster FROM movie as m \n" +
             "LEFT JOIN movie_country as mc ON m.id = mc.movie_id \n" +
             "LEFT JOIN country as c ON mc.country_id = c.id\n" +
             "LEFT JOIN movie_genre as mg ON m.id = mg.movie_id\n" +
             "LEFT JOIN genre as g ON mg.genre_id = g.id \n" +
             "ORDER BY m.id,mc.id,mg.id";
-    private static final String GET_ALL_GENRE_SQL = "SELECT * FROM genre";
+    private static final String GET_MOVIES_BY_GENRE_SQL = "SELECT m.id, m.name_ru,m.name_eng,m.year_release,c.id as country_id,c.name as country_name,g.id as genre_id,g.name as genre_name,m.description,m.rating,m.price,m.poster FROM movie as m\n" +
+            "LEFT JOIN movie_country as mc ON m.id = mc.movie_id \n" +
+            "LEFT JOIN country as c ON mc.country_id = c.id\n" +
+            "LEFT JOIN movie_genre as mg ON m.id = mg.movie_id\n" +
+            "LEFT JOIN genre as g ON mg.genre_id = g.id\n" +
+            "WHERE m.id IN (SELECT movie_id FROM movie_genre where genre_id = ?)\n" +
+            "ORDER BY m.id,mc.id,mg.id";
 
     @Autowired
     public JdbcMovieDao(JdbcTemplate jdbcTemplate) {
@@ -68,6 +75,23 @@ public class JdbcMovieDao implements MovieDao {
             return genres;
         } catch (EmptyResultDataAccessException e) {
             throw new EmptyResultDataAccessException("Not found genres", 1, e);
+        }
+    }
+
+    @Override
+    public List<Movie> getMovieByGenre(int genreId) {
+        logger.info("Start processing query to get movies by genreId = {}", genreId);
+
+        try {
+            long startTime = System.currentTimeMillis();
+
+            List<Movie> movies = jdbcTemplate.query(GET_MOVIES_BY_GENRE_SQL, MOVIE_EXTRACTOR, genreId);
+
+            logger.info("Finish processing query to get movies by genreId = {}. It took {} ms", genreId, System.currentTimeMillis() - startTime);
+
+            return movies;
+        } catch (EmptyResultDataAccessException e) {
+            throw new EmptyResultDataAccessException(String.format("Not found movies by genreId = %s", genreId), 1, e);
         }
     }
 }

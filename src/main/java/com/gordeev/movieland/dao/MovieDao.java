@@ -11,4 +11,6 @@ public interface MovieDao {
     List<Movie> getAllMovie();
 
     List<Genre> getAllGenre();
+
+    List<Movie> getMovieByGenre(int genreId);
 }

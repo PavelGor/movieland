@@ -76,6 +76,46 @@ public class DefaultMovieServiceTest {
 
         assertTrue(actualMovies.size() == 25);
 
+        assertEqualsList(actualMovies);
+    }
+
+    @Test
+    public void testGetThreeRandomMovie() {
+        List<Movie> actualMovies = movieService.getThreeRandomMovie();
+
+        assertTrue(actualMovies.size() == 3);
+    }
+
+    @Test
+    public void getAllGenre() {
+        Genre firstGenre = new Genre();
+        firstGenre.setId(1);
+        firstGenre.setName("драма");
+        Genre secondGenre = new Genre();
+        secondGenre.setId(2);
+        secondGenre.setName("криминал");
+
+        List<Genre> genres = movieService.getAllGenre();
+
+        assertTrue(!genres.isEmpty());
+        assertEquals(firstGenre.getId(),genres.get(0).getId());
+        assertEquals(secondGenre.getId(),genres.get(1).getId());
+
+        assertEquals(firstGenre.getName(),genres.get(0).getName());
+        assertEquals(secondGenre.getName(),genres.get(1).getName());
+    }
+
+    @Test
+    public void getMovieByGenre() {
+        int genreId = 1; //it is drama
+        List<Movie> actualMovies = movieService.getMovieByGenre(genreId);
+
+        assertTrue(actualMovies.size() == 16);
+
+        assertEqualsList(actualMovies);
+    }
+
+    private void assertEqualsList(List<Movie> actualMovies) {
         Movie expectedFirstMovie = expectedMovies.get(0);
         Movie expectedSecondMovie = expectedMovies.get(1);
         Movie actualFirstMovie = actualMovies.get(0);
@@ -114,31 +154,5 @@ public class DefaultMovieServiceTest {
         assertTrue(expectedSecondMovie.getGenres().size() == 5);
         assertEquals(expectedFirstMovie.getGenres().get(0), actualFirstMovie.getGenres().get(0));
         assertEquals(expectedSecondMovie.getGenres().get(0), actualSecondMovie.getGenres().get(0));
-    }
-
-    @Test
-    public void testGetThreeRandomMovie() {
-        List<Movie> actualMovies = movieService.getThreeRandomMovie();
-
-        assertTrue(actualMovies.size() == 3);
-    }
-
-    @Test
-    public void getAllGenre() {
-        Genre firstGenre = new Genre();
-        firstGenre.setId(1);
-        firstGenre.setName("драма");
-        Genre secondGenre = new Genre();
-        secondGenre.setId(2);
-        secondGenre.setName("криминал");
-
-        List<Genre> genres = movieService.getAllGenre();
-
-        assertTrue(!genres.isEmpty());
-        assertEquals(firstGenre.getId(),genres.get(0).getId());
-        assertEquals(secondGenre.getId(),genres.get(1).getId());
-
-        assertEquals(firstGenre.getName(),genres.get(0).getName());
-        assertEquals(secondGenre.getName(),genres.get(1).getName());
     }
 }

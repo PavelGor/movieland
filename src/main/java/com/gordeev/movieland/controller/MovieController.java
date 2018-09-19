@@ -5,9 +5,7 @@ import com.gordeev.movieland.entity.Movie;
 import com.gordeev.movieland.service.MovieService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,22 +20,27 @@ public class MovieController {
         this.movieService = movieService;
     }
 
-    @RequestMapping(value = "/movie", method = RequestMethod.GET)
+    @RequestMapping("/movie")
     @ResponseBody
     protected List<Movie> getAllMovie() {
         return movieService.getAllMovie();
     }
 
-    @RequestMapping(value = "/movie/random", method = RequestMethod.GET)
+    @RequestMapping("/movie/random")
     @ResponseBody
     protected List<Movie> getThreeRandomMovie() {
         return movieService.getThreeRandomMovie();
     }
 
-    @RequestMapping(value = "/genre", method = RequestMethod.GET)
+    @RequestMapping("/genre")
     @ResponseBody
     protected List<Genre> getAllGenre() {
         return movieService.getAllGenre();
     }
 
+    @RequestMapping("/movie/genre/{genreId}")
+    @ResponseBody
+    protected List<Movie> getMovieByGenre(@PathVariable int genreId) {
+        return movieService.getMovieByGenre(genreId);
+    }
 }
