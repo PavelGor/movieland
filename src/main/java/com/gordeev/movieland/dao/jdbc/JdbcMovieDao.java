@@ -25,6 +25,13 @@ public class JdbcMovieDao implements MovieDao {
             "LEFT JOIN movie_genre as mg ON m.id = mg.movie_id\n" +
             "LEFT JOIN genre as g ON mg.genre_id = g.id \n" +
             "ORDER BY m.id,mc.id,mg.id";
+    private static final String GET_THREE_RANDOM_MOVIE_SQL = "SELECT m.id, m.name_ru,m.name_eng,m.year_release,c.id as country_id,c.name as country_name,g.id as genre_id,g.name as genre_name,m.description,m.rating,m.price,m.poster FROM movie as m\n" +
+            "LEFT JOIN movie_country as mc ON m.id = mc.movie_id\n" +
+            "LEFT JOIN country as c ON mc.country_id = c.id\n" +
+            "LEFT JOIN movie_genre as mg ON m.id = mg.movie_id\n" +
+            "LEFT JOIN genre as g ON mg.genre_id = g.id\n" +
+            "WHERE m.id IN (SELECT id FROM movie ORDER BY RANDOM() LIMIT 3)\n" +
+            "ORDER BY m.id,mc.id,mg.id";
 
     @Autowired
     public JdbcMovieDao(JdbcTemplate jdbcTemplate) {
@@ -42,6 +49,23 @@ public class JdbcMovieDao implements MovieDao {
             List<Movie> movies = jdbcTemplate.query(GET_ALL_SQL, MOVIE_EXTRACTOR);
 
             logger.info("Finish processing query to get all movies. It took {} ms", System.currentTimeMillis() - startTime);
+
+            return movies;
+        } catch (EmptyResultDataAccessException e) {
+            throw new EmptyResultDataAccessException("Not found movies", 1, e);
+        }
+    }
+
+    @Override
+    public List<Movie> getThreeRandomMovie() {
+        logger.info("Start processing query to get 3 random movie");
+
+        try {
+            long startTime = System.currentTimeMillis();
+
+            List<Movie> movies = jdbcTemplate.query(GET_THREE_RANDOM_MOVIE_SQL, MOVIE_EXTRACTOR);
+
+            logger.info("Finish processing query to get 3 random movie. It took {} ms", System.currentTimeMillis() - startTime);
 
             return movies;
         } catch (EmptyResultDataAccessException e) {

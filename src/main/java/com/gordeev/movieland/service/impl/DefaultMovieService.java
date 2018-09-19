@@ -27,15 +27,6 @@ public class DefaultMovieService implements MovieService{
 
     @Override
     public List<Movie> getThreeRandomMovie() {
-        List<Movie> allMovies = movieDao.getAllMovie();
-        List<Movie> threeRandomMovie = new ArrayList<>();
-
-        for (int i = 0; i < 3; i++) {
-            int index = randomGenerator.nextInt(allMovies.size());
-            threeRandomMovie.add(allMovies.get(index));
-            allMovies.remove(index);
-        }
-
-        return threeRandomMovie;
+        return movieDao.getThreeRandomMovie();
     }
 }

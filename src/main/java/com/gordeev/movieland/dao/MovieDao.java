@@ -9,4 +9,6 @@ public interface MovieDao {
 
     List<Movie> getAllMovie();
 
+    List<Movie> getThreeRandomMovie();
+
 }
