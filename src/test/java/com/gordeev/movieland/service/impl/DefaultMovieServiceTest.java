@@ -50,7 +50,7 @@ public class DefaultMovieServiceTest {
         //Second movie setUp
         countries = new ArrayList<>();
         genres = new ArrayList<>();
-        secondMovie.setId(2);
+        secondMovie.setId(6);
         secondMovie.setNameRussian("Начало");
         secondMovie.setNameNative("Inception");
         secondMovie.setYearOfRelease(2010);
@@ -58,8 +58,8 @@ public class DefaultMovieServiceTest {
         secondMovie.setRating(8.6);
         secondMovie.setPrice(130.0);
         secondMovie.setPicturePath("https://images-na.ssl-images-amazon.com/images/M/MV5BMjAxMzY3NjcxNF5BMl5BanBnXkFtZTcwNTI5OTM0Mw@@._V1._SY209_CR0,0,140,209_.jpg");
-        countries.add("Великобритания");
         countries.add("США");
+        countries.add("Великобритания");
         genres.add("фантастика");
         genres.add("боевик");
         genres.add("триллер");
@@ -73,15 +73,15 @@ public class DefaultMovieServiceTest {
     public void testGetAllMovie() {
         List<Movie> actualMovies = movieService.getAllMovie();
 
-        assertTrue(actualMovies.size() == 2);
+        assertTrue(actualMovies.size() == 25);
 
         Movie expectedFirstMovie = expectedMovies.get(0);
         Movie expectedSecondMovie = expectedMovies.get(1);
         Movie actualFirstMovie = actualMovies.get(0);
-        Movie actualSecondMovie = actualMovies.get(1);
+        Movie actualSecondMovie = actualMovies.get(5);
 
         assertEquals(expectedFirstMovie.getId(), actualFirstMovie.getId());
-        assertEquals(expectedSecondMovie.getId(), actualMovies.get(1).getId());
+        assertEquals(expectedSecondMovie.getId(), actualSecondMovie.getId());
 
         assertEquals(expectedFirstMovie.getNameRussian(), actualFirstMovie.getNameRussian());
         assertEquals(expectedSecondMovie.getNameRussian(), actualSecondMovie.getNameRussian());
@@ -113,5 +113,12 @@ public class DefaultMovieServiceTest {
 //        assertTrue(expectedSecondMovie.getGenres().size() == 5);
 //        assertEquals(expectedFirstMovie.getGenres().get(0), actualFirstMovie.getGenres().get(0));
 //        assertEquals(expectedSecondMovie.getGenres().get(0), actualSecondMovie.getGenres().get(0));
+    }
+
+    @Test
+    public void testGetThreeRandomMovie() {
+        List<Movie> actualMovies = movieService.getThreeRandomMovie();
+
+        assertTrue(actualMovies.size() == 3);
     }
 }

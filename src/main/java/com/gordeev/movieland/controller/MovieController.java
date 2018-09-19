@@ -24,7 +24,12 @@ public class MovieController {
     @RequestMapping(value = "/movie", method = RequestMethod.GET)
     @ResponseBody
     protected List<Movie> getAllMovie() {
-        List<Movie> movies = movieService.getAllMovie();
-        return movies;
+        return movieService.getAllMovie();
+    }
+
+    @RequestMapping(value = "/movie/random", method = RequestMethod.GET)
+    @ResponseBody
+    protected List<Movie> getThreeRandomMovie() {
+        return movieService.getThreeRandomMovie();
     }
 }
