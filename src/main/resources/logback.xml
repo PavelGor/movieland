@@ -1,6 +1,6 @@
 <configuration>
 
-    <appender name="logAppender" class="ch.qos.logback.core.rolling.RollingFileAppender">
+    <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <file>logs/movieland.log</file>
         <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
             <FileNamePattern>logs/movieland-%d{yyyy-MM-dd}.log.%i</FileNamePattern>
@@ -20,8 +20,8 @@
         </encoder>
     </appender>
 
-    <root level="info">
+    <root level="INFO">
         <appender-ref ref="STDOUT" />
-        <appender-ref ref="logAppender"/>
+        <appender-ref ref="FILE"/>
     </root>
 </configuration>

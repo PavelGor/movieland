@@ -32,8 +32,6 @@ public class DefaultMovieServiceTest {
         expectedMovies.add(secondMovie);
 
         //First movie setUp
-        ArrayList<String> countries = new ArrayList<>();
-        ArrayList<String> genres = new ArrayList<>();
         firstMovie.setId(1);
         firstMovie.setNameRussian("Побег из Шоушенка");
         firstMovie.setNameNative("The Shawshank Redemption");
@@ -42,15 +40,8 @@ public class DefaultMovieServiceTest {
         firstMovie.setRating(8.9);
         firstMovie.setPrice(123.45);
         firstMovie.setPicturePath("https://images-na.ssl-images-amazon.com/images/M/MV5BODU4MjU4NjIwNl5BMl5BanBnXkFtZTgwMDU2MjEyMDE@._V1._SY209_CR0,0,140,209_.jpg");
-        countries.add("США");
-        genres.add("драма");
-        genres.add("криминал");
-        firstMovie.setCountries(countries);
-        firstMovie.setGenres(genres);
 
         //Second movie setUp
-        countries = new ArrayList<>();
-        genres = new ArrayList<>();
         secondMovie.setId(6);
         secondMovie.setNameRussian("Начало");
         secondMovie.setNameNative("Inception");
@@ -59,15 +50,6 @@ public class DefaultMovieServiceTest {
         secondMovie.setRating(8.6);
         secondMovie.setPrice(130.0);
         secondMovie.setPicturePath("https://images-na.ssl-images-amazon.com/images/M/MV5BMjAxMzY3NjcxNF5BMl5BanBnXkFtZTcwNTI5OTM0Mw@@._V1._SY209_CR0,0,140,209_.jpg");
-        countries.add("США");
-        countries.add("Великобритания");
-        genres.add("фантастика");
-        genres.add("боевик");
-        genres.add("триллер");
-        genres.add("драма");
-        genres.add("детектив");
-        secondMovie.setCountries(countries);
-        secondMovie.setGenres(genres);
     }
 
     @Test
@@ -86,29 +68,12 @@ public class DefaultMovieServiceTest {
         assertTrue(actualMovies.size() == 3);
     }
 
-    @Test
-    public void getAllGenre() {
-        Genre firstGenre = new Genre();
-        firstGenre.setId(1);
-        firstGenre.setName("драма");
-        Genre secondGenre = new Genre();
-        secondGenre.setId(2);
-        secondGenre.setName("криминал");
 
-        List<Genre> genres = movieService.getAllGenre();
-
-        assertTrue(!genres.isEmpty());
-        assertEquals(firstGenre.getId(),genres.get(0).getId());
-        assertEquals(secondGenre.getId(),genres.get(1).getId());
-
-        assertEquals(firstGenre.getName(),genres.get(0).getName());
-        assertEquals(secondGenre.getName(),genres.get(1).getName());
-    }
 
     @Test
-    public void getMovieByGenre() {
+    public void testGetMovieByGenreId() {
         int genreId = 1; //it is drama
-        List<Movie> actualMovies = movieService.getMovieByGenre(genreId);
+        List<Movie> actualMovies = movieService.getMoviesByGenreId(genreId);
 
         assertTrue(actualMovies.size() == 16);
 
@@ -146,13 +111,8 @@ public class DefaultMovieServiceTest {
         assertEquals(expectedSecondMovie.getPicturePath(), actualSecondMovie.getPicturePath());
 
         assertTrue(actualFirstMovie.getCountries().size() == 1);
-        assertTrue(expectedSecondMovie.getCountries().size() == 2);
-        assertEquals(expectedFirstMovie.getCountries().get(0), actualFirstMovie.getCountries().get(0));
-        assertEquals(expectedSecondMovie.getCountries().get(0), actualSecondMovie.getCountries().get(0));
-
         assertTrue(actualFirstMovie.getGenres().size() == 2);
-        assertTrue(expectedSecondMovie.getGenres().size() == 5);
-        assertEquals(expectedFirstMovie.getGenres().get(0), actualFirstMovie.getGenres().get(0));
-        assertEquals(expectedSecondMovie.getGenres().get(0), actualSecondMovie.getGenres().get(0));
+        assertTrue(actualSecondMovie.getCountries().size() == 2);
+        assertTrue(actualSecondMovie.getGenres().size() == 5);
     }
 }

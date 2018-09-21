@@ -1,6 +1,7 @@
 package com.gordeev.movieland.entity;
 
-import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 
 public class Movie {
     private int id;
@@ -11,8 +12,8 @@ public class Movie {
     private double rating;
     private double price;
     private String picturePath;
-    private ArrayList<String> countries;
-    private ArrayList<String> genres;
+    private List<Country> countries;
+    private List<Genre> genres;
 
     public int getId() {
         return id;
@@ -78,19 +79,59 @@ public class Movie {
         this.picturePath = picturePath;
     }
 
-    public ArrayList<String> getCountries() {
+    public List<Country> getCountries() {
         return countries;
     }
 
-    public void setCountries(ArrayList<String> countries) {
+    public void setCountries(List<Country> countries) {
         this.countries = countries;
     }
 
-    public ArrayList<String> getGenres() {
+    public List<Genre> getGenres() {
         return genres;
     }
 
-    public void setGenres(ArrayList<String> genres) {
+    public void setGenres(List<Genre> genres) {
         this.genres = genres;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Movie movie = (Movie) o;
+        return id == movie.id &&
+                yearOfRelease == movie.yearOfRelease &&
+                Double.compare(movie.rating, rating) == 0 &&
+                Double.compare(movie.price, price) == 0 &&
+                Objects.equals(nameRussian, movie.nameRussian) &&
+                Objects.equals(nameNative, movie.nameNative) &&
+                Objects.equals(description, movie.description) &&
+                Objects.equals(picturePath, movie.picturePath) &&
+                Objects.equals(countries, movie.countries) &&
+                Objects.equals(genres, movie.genres);
+    }
+
+    @Override
+    public int hashCode() {
+
+        return Objects.hash(id, nameRussian, nameNative, yearOfRelease, description, rating, price, picturePath, countries, genres);
+    }
+
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder("Movie{");
+        sb.append("id=").append(id);
+        sb.append(", nameRussian='").append(nameRussian).append('\'');
+        sb.append(", nameNative='").append(nameNative).append('\'');
+        sb.append(", yearOfRelease=").append(yearOfRelease);
+        sb.append(", description='").append(description).append('\'');
+        sb.append(", rating=").append(rating);
+        sb.append(", price=").append(price);
+        sb.append(", picturePath='").append(picturePath).append('\'');
+        sb.append(", countries=").append(countries);
+        sb.append(", genres=").append(genres);
+        sb.append('}');
+        return sb.toString();
     }
 }

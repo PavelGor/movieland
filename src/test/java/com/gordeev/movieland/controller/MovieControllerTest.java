@@ -61,8 +61,8 @@ public class MovieControllerTest {
         countries.add("США");
         genres.add("драма");
         genres.add("криминал");
-        firstMovie.setCountries(countries);
-        firstMovie.setGenres(genres);
+//        firstMovie.setCountries(countries);
+//        firstMovie.setGenres(genres);
 
         //Second movie setUp
         countries = new ArrayList<>();
@@ -82,8 +82,8 @@ public class MovieControllerTest {
         genres.add("триллер");
         genres.add("драма");
         genres.add("детектив");
-        secondMovie.setCountries(countries);
-        secondMovie.setGenres(genres);
+//        secondMovie.setCountries(countries);
+//        secondMovie.setGenres(genres);
     }
 
     @Test
@@ -137,8 +137,8 @@ public class MovieControllerTest {
                 .andExpect(jsonPath("$[0].rating", is(expectedFirstMovie.getRating())))
                 .andExpect(jsonPath("$[0].price", is(expectedFirstMovie.getPrice())))
                 .andExpect(jsonPath("$[0].picturePath", is(expectedFirstMovie.getPicturePath())))
-                .andExpect(jsonPath("$[0].countries", is(expectedFirstMovie.getCountries())))
-                .andExpect(jsonPath("$[0].genres", is(expectedFirstMovie.getGenres())))
+//                .andExpect(jsonPath("$[0].countries", is(expectedFirstMovie.getCountries())))
+//                .andExpect(jsonPath("$[0].genres", is(expectedFirstMovie.getGenres())))
                 .andExpect(jsonPath("$[5].id", is(expectedSecondMovie.getId())))
                 .andExpect(jsonPath("$[5].nameRussian", is(expectedSecondMovie.getNameRussian())))
                 .andExpect(jsonPath("$[5].nameNative", is(expectedSecondMovie.getNameNative())))
@@ -146,8 +146,8 @@ public class MovieControllerTest {
                 .andExpect(jsonPath("$[5].description", is(expectedSecondMovie.getDescription())))
                 .andExpect(jsonPath("$[5].rating", is(expectedSecondMovie.getRating())))
                 .andExpect(jsonPath("$[5].price", is(expectedSecondMovie.getPrice())))
-                .andExpect(jsonPath("$[5].picturePath", is(expectedSecondMovie.getPicturePath())))
-                .andExpect(jsonPath("$[5].countries", is(expectedSecondMovie.getCountries())))
-                .andExpect(jsonPath("$[5].genres", is(expectedSecondMovie.getGenres())));
+                .andExpect(jsonPath("$[5].picturePath", is(expectedSecondMovie.getPicturePath())));
+//                .andExpect(jsonPath("$[5].countries", is(expectedSecondMovie.getCountries())))
+//                .andExpect(jsonPath("$[5].genres", is(expectedSecondMovie.getGenres())));
     }
 }

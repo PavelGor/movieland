@@ -1,17 +1,18 @@
 package com.gordeev.movieland.dao.jdbc;
 
 import com.gordeev.movieland.dao.MovieDao;
-import com.gordeev.movieland.dao.jdbc.extractor.MovieExtractor;
-import com.gordeev.movieland.dao.jdbc.mapper.GenreRowMapper;
-import com.gordeev.movieland.entity.Genre;
+import com.gordeev.movieland.dao.jdbc.extractor.MovieCountriesExtractor;
+import com.gordeev.movieland.dao.jdbc.extractor.MovieGenresExtractor;
+import com.gordeev.movieland.dao.jdbc.mapper.MovieRowMapper;
 import com.gordeev.movieland.entity.Movie;
+import com.gordeev.movieland.vo.CountryVO;
+import com.gordeev.movieland.vo.GenreVO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.EmptyResultDataAccessException;
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.ResultSetExtractor;
-import org.springframework.jdbc.core.RowMapper;
+import org.springframework.jdbc.core.*;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -19,27 +20,23 @@ import java.util.List;
 @Repository
 public class JdbcMovieDao implements MovieDao {
     private final Logger logger = LoggerFactory.getLogger(getClass());
-    private static final ResultSetExtractor<List<Movie>> MOVIE_EXTRACTOR = new MovieExtractor();
-    private static final RowMapper<Genre> GENRE_ROW_MAPPER = new GenreRowMapper();
-    private JdbcTemplate jdbcTemplate;
+    private static final ResultSetExtractor<List<GenreVO>>  MOVIE_GENRES_EXTRACTOR = new MovieGenresExtractor();
+    private static final ResultSetExtractor<List<CountryVO>>  MOVIE_COUNTRIES_EXTRACTOR = new MovieCountriesExtractor();
+    private static final RowMapper<Movie> MOVIE_ROW_MAPPER = new MovieRowMapper();
 
-    private static final String GET_ALL_GENRE_SQL = "SELECT * FROM genre";
-    private static final String GET_ALL_MOVIE_SQL = "SELECT m.id, m.name_ru,m.name_eng,m.year_release,c.id as country_id,c.name as country_name,g.id as genre_id,g.name as genre_name,m.description,m.rating,m.price,m.poster FROM movie as m \n" +
-            "LEFT JOIN movie_country as mc ON m.id = mc.movie_id \n" +
-            "LEFT JOIN country as c ON mc.country_id = c.id\n" +
-            "LEFT JOIN movie_genre as mg ON m.id = mg.movie_id\n" +
-            "LEFT JOIN genre as g ON mg.genre_id = g.id \n" +
-            "ORDER BY m.id,mc.id,mg.id";
-    private static final String GET_MOVIES_BY_GENRE_SQL = "SELECT m.id, m.name_ru,m.name_eng,m.year_release,c.id as country_id,c.name as country_name,g.id as genre_id,g.name as genre_name,m.description,m.rating,m.price,m.poster FROM movie as m\n" +
-            "LEFT JOIN movie_country as mc ON m.id = mc.movie_id \n" +
-            "LEFT JOIN country as c ON mc.country_id = c.id\n" +
-            "LEFT JOIN movie_genre as mg ON m.id = mg.movie_id\n" +
-            "LEFT JOIN genre as g ON mg.genre_id = g.id\n" +
-            "WHERE m.id IN (SELECT movie_id FROM movie_genre where genre_id = ?)\n" +
-            "ORDER BY m.id,mc.id,mg.id";
+    private JdbcTemplate jdbcTemplate;
+    private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
+
+    private static final String GET_ALL_MOVIE_SQL = "SELECT * FROM movie";
+    private static final String GET_THREE_RANDOM_MOVIE_SQL = "SELECT * FROM movie ORDER BY RANDOM() LIMIT 3";
+    private static final String GET_MOVIES_BY_IDS_SQL = "SELECT * FROM movie WHERE id IN (:moviesIds)";
+    private static final String GET_GENRES_OF_MOVIES_SQL = "SELECT * FROM movie_genre WHERE movie_id IN (:moviesIds)";
+    private static final String GET_COUNTRIES_OF_MOVIES_SQL = "SELECT * FROM movie_country WHERE movie_id IN (:moviesIds)";
+    private static final String GET_MOVIES_IDS_BY_GENRE_SQL = "SELECT movie_id FROM movie_genre WHERE genre_id = ?";
 
     @Autowired
-    public JdbcMovieDao(JdbcTemplate jdbcTemplate) {
+    public JdbcMovieDao(JdbcTemplate jdbcTemplate, NamedParameterJdbcTemplate namedParameterJdbcTemplate) {
+        this.namedParameterJdbcTemplate = namedParameterJdbcTemplate;
         this.jdbcTemplate = jdbcTemplate;
     }
 
@@ -47,51 +44,76 @@ public class JdbcMovieDao implements MovieDao {
     @Override
     public List<Movie> getAllMovie() {
         logger.info("Start processing query to get all movies");
+        long startTime = System.currentTimeMillis();
 
-        try {
-            long startTime = System.currentTimeMillis();
+        List<Movie> movies = jdbcTemplate.query(GET_ALL_MOVIE_SQL, MOVIE_ROW_MAPPER);
 
-            List<Movie> movies = jdbcTemplate.query(GET_ALL_MOVIE_SQL, MOVIE_EXTRACTOR);
+        logger.info("Finish processing query to get all movies. It took {} ms", System.currentTimeMillis() - startTime);
+        return movies;
+    }
 
-            logger.info("Finish processing query to get all movies. It took {} ms", System.currentTimeMillis() - startTime);
 
-            return movies;
-        } catch (EmptyResultDataAccessException e) {
-            throw new EmptyResultDataAccessException("Not found movies", 1, e);
-        }
+    @Override
+    public List<Integer> getMoviesIdsByGenre(int genreId) {
+        logger.info("Start processing query to get movieIds by genre");
+        long startTime = System.currentTimeMillis();
+
+        List<Integer> movieIds = jdbcTemplate.query(GET_MOVIES_IDS_BY_GENRE_SQL, new SingleColumnRowMapper<>(), genreId);
+
+        logger.info("Finish processing query to get movieIds by genre. It took {} ms", System.currentTimeMillis() - startTime);
+        return movieIds;
     }
 
     @Override
-    public List<Genre> getAllGenre() {
-        logger.info("Start processing query to get all genres");
+    public List<GenreVO> getMoviesGenres(List<Integer> moviesIds) {
+        logger.info("Start processing query to get genresVO of movies with moviesIds: {}", moviesIds);
+        long startTime = System.currentTimeMillis();
 
-        try {
-            long startTime = System.currentTimeMillis();
+        MapSqlParameterSource parameters = new MapSqlParameterSource();
+        parameters.addValue("moviesIds", moviesIds);
 
-            List<Genre> genres = jdbcTemplate.query(GET_ALL_GENRE_SQL, GENRE_ROW_MAPPER);
+        List<GenreVO> moviesGenres = namedParameterJdbcTemplate.query(GET_GENRES_OF_MOVIES_SQL, parameters, MOVIE_GENRES_EXTRACTOR);
 
-            logger.info("Finish processing query to get all genres. It took {} ms", System.currentTimeMillis() - startTime);
-
-            return genres;
-        } catch (EmptyResultDataAccessException e) {
-            throw new EmptyResultDataAccessException("Not found genres", 1, e);
-        }
+        logger.info("Finish processing query to get genresVO of movies with moviesIds: {}. It took {} ms", moviesIds, System.currentTimeMillis() - startTime);
+        return moviesGenres;
     }
 
     @Override
-    public List<Movie> getMovieByGenre(int genreId) {
-        logger.info("Start processing query to get movies by genreId = {}", genreId);
+    public List<CountryVO> getMoviesCountries(List<Integer> moviesIds) {
+        logger.info("Start processing query to get countriesVO of movies with moviesIds: {}", moviesIds);
+        long startTime = System.currentTimeMillis();
 
-        try {
-            long startTime = System.currentTimeMillis();
+        MapSqlParameterSource parameters = new MapSqlParameterSource();
+        parameters.addValue("moviesIds", moviesIds);
 
-            List<Movie> movies = jdbcTemplate.query(GET_MOVIES_BY_GENRE_SQL, MOVIE_EXTRACTOR, genreId);
+        List<CountryVO> moviesCountries = namedParameterJdbcTemplate.query(GET_COUNTRIES_OF_MOVIES_SQL, parameters, MOVIE_COUNTRIES_EXTRACTOR);
 
-            logger.info("Finish processing query to get movies by genreId = {}. It took {} ms", genreId, System.currentTimeMillis() - startTime);
+        logger.info("Finish processing query to get countriesVO of movies with moviesIds: {}. It took {} ms", moviesIds, System.currentTimeMillis() - startTime);
+        return moviesCountries;
+    }
 
-            return movies;
-        } catch (EmptyResultDataAccessException e) {
-            throw new EmptyResultDataAccessException(String.format("Not found movies by genreId = %s", genreId), 1, e);
-        }
+    @Override
+    public List<Movie> getThreeRandomMovie() {
+        logger.info("Start processing query to get 3 random movies");
+        long startTime = System.currentTimeMillis();
+
+        List<Movie> movies = jdbcTemplate.query(GET_THREE_RANDOM_MOVIE_SQL, MOVIE_ROW_MAPPER);
+
+        logger.info("Finish processing query to get 3 random movies. It took {} ms", System.currentTimeMillis() - startTime);
+        return movies;
+    }
+
+    @Override
+    public List<Movie> getMoviesByIds(List<Integer> moviesIds) {
+        logger.info("Start processing query to get movies with moviesIds: {}", moviesIds);
+        long startTime = System.currentTimeMillis();
+
+        MapSqlParameterSource parameters = new MapSqlParameterSource();
+        parameters.addValue("moviesIds", moviesIds);
+
+        List<Movie> movies = namedParameterJdbcTemplate.query(GET_MOVIES_BY_IDS_SQL, parameters, MOVIE_ROW_MAPPER);
+
+        logger.info("Finish processing query to get movies with moviesIds: {}. It took {} ms", moviesIds, System.currentTimeMillis() - startTime);
+        return movies;
     }
 }
