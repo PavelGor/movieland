@@ -13,15 +13,14 @@ import java.util.Map;
 
 @Service
 public class DefaultCountryService implements CountryService {
-    @Autowired
-    private CountryDao countryDao;
+    private CountryDao countryDao; //TODO: do it with cache - as  a genres
 
+    @Autowired
     public DefaultCountryService(CountryDao countryDao) {
         this.countryDao = countryDao;
     }
 
     @Override
-    @Cacheable(cacheNames = {"countries"})
     public Map<Integer, Country> getAllCountriesMap() {
         Map<Integer, Country> countriesMap = new HashMap<>();
         List<Country> countries = getAllCountries();

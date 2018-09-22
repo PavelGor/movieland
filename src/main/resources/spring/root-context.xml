@@ -31,17 +31,4 @@
         <constructor-arg ref="dataSource"/>
     </bean>
 
-    <bean id="cacheManager" class="org.springframework.cache.caffeine.CaffeineCacheManager">
-
-        <property name="cacheNames">
-            <set>
-                <value>genres</value>
-                <value>counties</value>
-            </set>
-        </property>
-
-        <property name="cacheSpecification" value="expireAfterWrite=4h"/>
-
-    </bean>
-
 </beans>

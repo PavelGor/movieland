@@ -1,5 +1,6 @@
 package com.gordeev.movieland.service.impl;
 
+import com.gordeev.movieland.cache.GenreCache;
 import com.gordeev.movieland.dao.GenreDao;
 import com.gordeev.movieland.entity.Genre;
 import com.gordeev.movieland.service.GenreService;
@@ -13,17 +14,16 @@ import java.util.Map;
 
 @Service
 public class DefaultGenreService implements GenreService {
-    private GenreDao genreDao;
+    private GenreCache genreCache;
 
     @Autowired
-    public DefaultGenreService(GenreDao genreDao) {
-        this.genreDao = genreDao;
+    public DefaultGenreService(GenreCache genreCache) {
+        this.genreCache = genreCache;
     }
 
     @Override
-    @Cacheable(cacheNames = {"genres"})
     public List<Genre> getAllGenre() {
-        return genreDao.getAllGenre();
+        return genreCache.getAllGenre();
     }
 
     @Override
