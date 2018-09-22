@@ -1,20 +1,24 @@
-package com.gordeev.movieland.cache;
+package com.gordeev.movieland.dao.cache;
 
 import com.gordeev.movieland.dao.GenreDao;
 import com.gordeev.movieland.entity.Genre;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
 
+import javax.annotation.Resource;
 import java.util.Date;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.TimeUnit;
 
-@Component
-public class GenreCache {
+@Primary
+@Repository
+public class GenreCache implements GenreDao{
     private final Logger logger = LoggerFactory.getLogger(getClass());
     @Autowired
     private GenreDao genreDao;

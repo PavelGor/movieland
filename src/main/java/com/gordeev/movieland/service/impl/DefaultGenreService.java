@@ -1,11 +1,10 @@
 package com.gordeev.movieland.service.impl;
 
-import com.gordeev.movieland.cache.GenreCache;
 import com.gordeev.movieland.dao.GenreDao;
+import com.gordeev.movieland.dao.cache.GenreCache;
 import com.gordeev.movieland.entity.Genre;
 import com.gordeev.movieland.service.GenreService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
@@ -14,16 +13,16 @@ import java.util.Map;
 
 @Service
 public class DefaultGenreService implements GenreService {
-    private GenreCache genreCache;
+    private GenreDao genreDao;
 
     @Autowired
-    public DefaultGenreService(GenreCache genreCache) {
-        this.genreCache = genreCache;
+    public DefaultGenreService(GenreDao genreDao) {
+        this.genreDao = genreDao;
     }
 
     @Override
     public List<Genre> getAllGenre() {
-        return genreCache.getAllGenre();
+        return genreDao.getAllGenre();
     }
 
     @Override
