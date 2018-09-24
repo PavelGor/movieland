@@ -1,6 +1,7 @@
 package com.gordeev.movieland.dao.jdbc.extractor;
 
-import com.gordeev.movieland.vo.CountryVO;
+import com.gordeev.movieland.entity.Country;
+import com.gordeev.movieland.vo.MovieToCountiesVo;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.ResultSetExtractor;
 
@@ -11,31 +12,31 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class MovieCountriesExtractor implements ResultSetExtractor<List<CountryVO>> {
+public class MovieCountriesExtractor implements ResultSetExtractor<List<MovieToCountiesVo>> {
     @Override
-    public List<CountryVO> extractData(ResultSet resultSet) throws DataAccessException, SQLException {
-        Map<Integer, CountryVO> countryVOMap = new HashMap<>();
-        CountryVO countryVO;
-        List<Integer> intCountries = new ArrayList<>();
+    public List<MovieToCountiesVo> extractData(ResultSet resultSet) throws DataAccessException, SQLException {
+        Map<Integer, MovieToCountiesVo> MovieToCountiesVoMap = new HashMap<>();
+        MovieToCountiesVo MovieToCountiesVo;
+        List<Country> countries = new ArrayList<>();
 
         while (resultSet.next()) {
             int currentMovieId = resultSet.getInt("movie_id");
 
-            countryVO = countryVOMap.get(currentMovieId);
+            MovieToCountiesVo = MovieToCountiesVoMap.get(currentMovieId);
 
-            if (countryVO == null){
-                countryVO = new CountryVO();
-                intCountries = new ArrayList<>();
+            if (MovieToCountiesVo == null) {
+                MovieToCountiesVo = new MovieToCountiesVo();
+                countries = new ArrayList<>();
 
-                countryVO.setMovieId(currentMovieId);
-                countryVO.setIntCountries(intCountries);
+                MovieToCountiesVo.setMovieId(currentMovieId);
+                MovieToCountiesVo.setCountries(countries);
 
-                countryVOMap.put(currentMovieId, countryVO);
+                MovieToCountiesVoMap.put(currentMovieId, MovieToCountiesVo);
             }
-
-            intCountries.add(resultSet.getInt("country_id"));
+            Country country = new Country(resultSet.getInt("id"), resultSet.getString("name"));
+            countries.add(country);
         }
 
-        return new ArrayList<>(countryVOMap.values());
+        return new ArrayList<>(MovieToCountiesVoMap.values());
     }
 }

@@ -6,9 +6,11 @@ import java.util.List;
 
 public interface MovieService {
 
-    List<Movie> getAllMovie();
+    List<Movie> getAll(String column, String direction);
 
     List<Movie> getThreeRandomMovie();
 
     List<Movie> getMoviesByGenreId(int genreId);
+
+    List<Movie> getAll();
 }

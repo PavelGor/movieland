@@ -1,6 +1,7 @@
 package com.gordeev.movieland.dao.jdbc.extractor;
 
-import com.gordeev.movieland.vo.GenreVO;
+import com.gordeev.movieland.entity.Genre;
+import com.gordeev.movieland.vo.MovieToGenresVO;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.ResultSetExtractor;
 
@@ -11,31 +12,31 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class MovieGenresExtractor implements ResultSetExtractor<List<GenreVO>> {
+public class MovieGenresExtractor implements ResultSetExtractor<List<MovieToGenresVO>> {
     @Override
-    public List<GenreVO> extractData(ResultSet resultSet) throws DataAccessException, SQLException {
-        Map<Integer, GenreVO> genreVOMap = new HashMap<>();
-        GenreVO genreVO;
-        List<Integer> intGenres = new ArrayList<>();
+    public List<MovieToGenresVO> extractData(ResultSet resultSet) throws DataAccessException, SQLException {
+        Map<Integer, MovieToGenresVO> MovieToGenresVOMap = new HashMap<>();
+        MovieToGenresVO movieToGenresVO;
+        List<Genre> genres = new ArrayList<>();
 
         while (resultSet.next()) {
             int currentMovieId = resultSet.getInt("movie_id");
 
-            genreVO = genreVOMap.get(currentMovieId);
+            movieToGenresVO = MovieToGenresVOMap.get(currentMovieId);
 
-            if (genreVO == null){
-                genreVO = new GenreVO();
-                intGenres = new ArrayList<>();
+            if (movieToGenresVO == null){
+                movieToGenresVO = new MovieToGenresVO();
+                genres = new ArrayList<>();
 
-                genreVO.setMovieId(currentMovieId);
-                genreVO.setIntGenres(intGenres);
+                movieToGenresVO.setMovieId(currentMovieId);
+                movieToGenresVO.setGenres(genres);
 
-                genreVOMap.put(currentMovieId, genreVO);
+                MovieToGenresVOMap.put(currentMovieId, movieToGenresVO);
             }
-
-            intGenres.add(resultSet.getInt("genre_id"));
+            Genre genre = new Genre(resultSet.getInt("id"), resultSet.getString("name"));
+            genres.add(genre);
         }
 
-        return new ArrayList<>(genreVOMap.values());
+        return new ArrayList<>(MovieToGenresVOMap.values());
     }
 }
