@@ -26,8 +26,8 @@ public class GenreCache implements GenreDao{
         this.genreDao = genreDao;
     }
 
-    @Scheduled(fixedRateString = "${cache.updateGenresRate}")
     @PostConstruct
+    @Scheduled(fixedRateString = "${cache.updateGenresRate}", initialDelayString = "${cache.updateGenresRate}")
     private void invalidate() {
             this.genres = genreDao.getAll();
             logger.info("Update all genres in cache from dao");
