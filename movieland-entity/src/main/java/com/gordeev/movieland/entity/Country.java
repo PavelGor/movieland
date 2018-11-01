@@ -1,7 +1,7 @@
 package com.gordeev.movieland.entity;
 
 import java.util.Objects;
-
+//TODO: immutable?
 public class Country {
     private int id;
     private String name;

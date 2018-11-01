@@ -1,5 +1,8 @@
 package com.gordeev.movieland.entity;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+
 import java.util.List;
 import java.util.Objects;
 
@@ -14,6 +17,8 @@ public class Movie {
     private String picturePath;
     private List<Country> countries;
     private List<Genre> genres;
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private List<Review> reviews;
 
     public int getId() {
         return id;
@@ -93,6 +98,14 @@ public class Movie {
 
     public void setGenres(List<Genre> genres) {
         this.genres = genres;
+    }
+
+    public List<Review> getReviews() {
+        return reviews;
+    }
+
+    public void setReviews(List<Review> reviews) {
+        this.reviews = reviews;
     }
 
     @Override

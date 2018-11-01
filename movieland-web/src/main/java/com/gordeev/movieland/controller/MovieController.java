@@ -47,4 +47,9 @@ public class MovieController {
     protected List<Movie> getMoviesByGenreId(@PathVariable int genreId) {
         return movieService.getMoviesByGenreId(genreId);
     }
+
+    @RequestMapping(value = "/{movieId}", method = RequestMethod.GET)
+    protected Movie getMovieById(@PathVariable int movieId) {
+        return movieService.getMovieById(movieId);
+    }
 }

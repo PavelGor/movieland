@@ -34,6 +34,4 @@ class JdbcCountryDaoTest extends GroovyTestCase {
         assertEquals(secondCountry.getName(),genres.get(1).getName())
     }
 
-    void testGetCountriesForMovies() {
-    }
 }

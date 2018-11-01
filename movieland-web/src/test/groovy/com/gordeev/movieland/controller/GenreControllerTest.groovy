@@ -35,12 +35,8 @@ class GenreControllerTest extends GroovyTestCase {
 
     @Test
     void testGetAllGenre() {
-        Genre firstGenre = new Genre()
-        firstGenre.setId(1)
-        firstGenre.setName("драма")
-        Genre secondGenre = new Genre()
-        secondGenre.setId(2)
-        secondGenre.setName("криминал")
+        Genre firstGenre = new Genre(1, "драма")
+        Genre secondGenre = new Genre(2,"криминал")
 
         mockMvc.perform(get("/genre"))
                 .andExpect(status().isOk())

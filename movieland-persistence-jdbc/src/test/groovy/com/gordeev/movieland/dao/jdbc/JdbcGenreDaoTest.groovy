@@ -28,13 +28,9 @@ class JdbcGenreDaoTest extends GroovyTestCase {
         expectedMoviesIds.add(19)
 
         expectedMovieToGenresVO = new ArrayList<>()
-        Genre firstGenre = new Genre()
-        firstGenre.setId(1)
-        firstGenre.setName("драма")
+        Genre firstGenre = new Genre(1,"драма")
 
-        Genre secondGenre = new Genre()
-        secondGenre.setId(6)
-        secondGenre.setName("биография")
+        Genre secondGenre = new Genre(6, "биография")
 
         List<Genre> genres = new ArrayList<>()
         genres.add(firstGenre)
@@ -48,12 +44,8 @@ class JdbcGenreDaoTest extends GroovyTestCase {
 
     @Test
     void testGetAll() {
-        Genre firstGenre = new Genre()
-        firstGenre.setId(1)
-        firstGenre.setName("драма")
-        Genre secondGenre = new Genre()
-        secondGenre.setId(2)
-        secondGenre.setName("криминал")
+        Genre firstGenre = new Genre(1,"драма")
+        Genre secondGenre = new Genre(2, "криминал")
 
         List<Genre> genres = genreDao.getAll()
 

@@ -38,6 +38,7 @@ public class JdbcMovieDao implements MovieDao {
     public List<Movie> getAll(RequestParameter requestParameter) {
         logger.info("Start processing query to get all movies ordered by column: {} and direction is: {}", requestParameter.getFieldName(), requestParameter.getSortDirection());
         long startTime = System.currentTimeMillis();
+        //TODO: Tests!!! create query generator
         String sql = GET_ALL_ORDERED_MOVIE_SQL + " " + requestParameter.getFieldName() + " " + requestParameter.getSortDirection().getName();
 
         List<Movie> movies = jdbcTemplate.query(sql, MOVIE_ROW_MAPPER);

@@ -27,8 +27,10 @@ public class JdbcConfig {
         dataSource.setUrl(url);
         dataSource.setUsername(username);
         dataSource.setPassword(password);
-        dataSource.setDriverClassName("org.postgresql.ds.PGPoolingDataSource");
         dataSource.setConnectionProperties("ssl=true;sslfactory=org.postgresql.ssl.NonValidatingFactory;");
+        dataSource.setMaxActive(100);
+        dataSource.setMaxIdle(30);
+        dataSource.setMaxWait(10000);
         return dataSource;
     }
 

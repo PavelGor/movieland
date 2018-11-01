@@ -102,4 +102,21 @@ class MovieControllerTest extends GroovyTestCase {
                 .andExpect(jsonPath("\$[5].price", is(expectedSecondMovie.getPrice())))
                 .andExpect(jsonPath("\$[5].picturePath", is(expectedSecondMovie.getPicturePath())))
     }
+
+    @Test
+    void getMovieById() {
+        Movie expectedFirstMovie = expectedMovies.get(0)
+        mockMvc.perform(get("/movie/1"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("id", is(expectedFirstMovie.getId())))
+                .andExpect(jsonPath("nameRussian", is(expectedFirstMovie.getNameRussian())))
+                .andExpect(jsonPath("nameNative", is(expectedFirstMovie.getNameNative())))
+                .andExpect(jsonPath("yearOfRelease", is(expectedFirstMovie.getYearOfRelease())))
+                .andExpect(jsonPath("description", is(expectedFirstMovie.getDescription())))
+                .andExpect(jsonPath("rating", is(expectedFirstMovie.getRating())))
+                .andExpect(jsonPath("price", is(expectedFirstMovie.getPrice())))
+                .andExpect(jsonPath("picturePath", is(expectedFirstMovie.getPicturePath())))
+                .andExpect(jsonPath("reviews[0].text", is("Гениальное кино! Смотришь и думаешь «Так не бывает!», но позже понимаешь, что только так и должно быть. Начинаешь заново осмысливать значение фразы, которую постоянно используешь в своей жизни, «Надежда умирает последней». Ведь если ты не надеешься, то все в твоей жизни гаснет, не остается смысла. Фильм наполнен бесконечным числом правильных афоризмов. Я уверена, что буду пересматривать его сотни раз.")))
+                .andExpect(jsonPath("reviews", hasSize(2)))
+    }
 }

@@ -1,7 +1,5 @@
 package com.gordeev.movieland.vo;
 
-import java.util.Arrays;
-
 public enum SortDirection {
     ASC("asc"), DESC("desc");
 
@@ -21,6 +19,6 @@ public enum SortDirection {
                 return sortDirection;
             }
         }
-        throw new IllegalArgumentException("No sort parameter: " + name + " found, Allowed values are " + Arrays.toString(values()));
+        throw new IllegalArgumentException("No sort parameter: " + name + " found");
     }
 }
