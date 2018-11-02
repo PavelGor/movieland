@@ -6,6 +6,8 @@ import com.gordeev.movieland.entity.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
@@ -17,15 +19,18 @@ import java.util.Set;
 @Repository
 public class JdbcUserDao implements UserDao {
     private static final String GET_USERS_BY_IDS_SQL = "SELECT * FROM USERS WHERE id IN (:userIds)";
+    private static final String GET_USER_BY_EMAIL_SQL = "SELECT * FROM USERS WHERE email = ?";
 
     private static final RowMapper<User> USER_ROW_MAPPER = new UserRowMapper();
     private final Logger logger = LoggerFactory.getLogger(getClass());
 
     private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
+    private JdbcTemplate jdbcTemplate;
 
     @Autowired
-    public JdbcUserDao(NamedParameterJdbcTemplate namedParameterJdbcTemplate) {
+    public JdbcUserDao(NamedParameterJdbcTemplate namedParameterJdbcTemplate, JdbcTemplate jdbcTemplate) {
         this.namedParameterJdbcTemplate = namedParameterJdbcTemplate;
+        this.jdbcTemplate = jdbcTemplate;
     }
 
     @Override
@@ -40,5 +45,15 @@ public class JdbcUserDao implements UserDao {
 
         logger.info("Finish processing query to get users with userIds: {}. It took {} ms", userIds, System.currentTimeMillis() - startTime);
         return users;
+    }
+
+    @Override
+    public User getUserByEmail(String email) {
+        long startTime = System.currentTimeMillis();
+
+        User user = jdbcTemplate.queryForObject(GET_USER_BY_EMAIL_SQL, USER_ROW_MAPPER, email);
+
+        logger.info("Finish processing query to get user by email. It took {} ms", System.currentTimeMillis() - startTime);
+        return user;
     }
 }

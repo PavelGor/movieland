@@ -50,4 +50,14 @@ class JdbcUserDaoTest extends GroovyTestCase {
         assertEquals(actualUsers[0].getEmail(), expectedUsers[0].getEmail())
         assertEquals(actualUsers[1].getEmail(), expectedUsers[1].getEmail())
     }
+
+    @Test
+    void testGetUserByEmail(){
+        User actualUser = userDao.getUserByEmail("ronald.reynolds66@example.com")
+
+        assertEquals(actualUser.getId(), expectedUsers[0].getId())
+        assertEquals(actualUser.getNickname(), expectedUsers[0].getNickname())
+        assertEquals(actualUser.getPassword(), expectedUsers[0].getPassword())
+        assertEquals(actualUser.getEmail(), expectedUsers[0].getEmail())
+    }
 }

@@ -7,4 +7,6 @@ import java.util.Set;
 
 public interface UserDao {
     List<User> getUsersByIds(Set<Integer> userIds);
+
+    User getUserByEmail(String email);
 }
