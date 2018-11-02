@@ -25,7 +25,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WebAppConfiguration
 class SecurityControllerTest extends GroovyTestCase {
     private MockMvc mockMvc
-    ObjectMapper mapper = new ObjectMapper()
+    private ObjectMapper mapper = new ObjectMapper()
 
     @Autowired
     SecurityController securityController

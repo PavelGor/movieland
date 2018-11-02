@@ -1,6 +1,7 @@
 package com.gordeev.movieland.dao.jdbc.mapper;
 
 import com.gordeev.movieland.entity.User;
+import com.gordeev.movieland.vo.UserRole;
 import org.springframework.jdbc.core.RowMapper;
 
 import java.sql.ResultSet;
@@ -15,6 +16,9 @@ public class UserRowMapper implements RowMapper<User> {
         user.setNickname(resultSet.getString("nickname"));
         user.setEmail(resultSet.getString("email"));
         user.setPassword(resultSet.getString("password"));
+        String roleString = resultSet.getString("role_name");
+        UserRole userRole = UserRole.getByName(roleString);
+        user.setUserRole(userRole);
 
         return user;
     }

@@ -70,4 +70,14 @@ public class DefaultSecurityService implements SecurityService{
         }
         return false;
     }
+
+    @Override
+    public User getUser(String uuid) {
+        for (Session session : sessionList) {
+            if (session.getUuid().equals(uuid)) {
+                return session.getUser();
+            }
+        }
+        return null;
+    }
 }

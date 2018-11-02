@@ -1,15 +1,10 @@
 SET MODE PostgreSQL;
 
-CREATE TABLE role (
-    id SERIAL PRIMARY KEY  NOT NULL,
-    name TEXT NOT NULL
-);
-
 CREATE TABLE USERS (
   id SERIAL PRIMARY KEY,
   email VARCHAR(50)  UNIQUE NOT NULL,
   password VARCHAR(255) NOT NULL,
-  role_id SMALLINT NOT NULL,
+  role_name VARCHAR(50) NOT NULL,
   nickname VARCHAR(100)
 );
 

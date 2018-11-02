@@ -38,4 +38,9 @@ public class DefaultReviewService implements ReviewService{
 
         return reviews;
     }
+
+    @Override
+    public void add(Review review) {
+        reviewDao.add(review);
+    }
 }

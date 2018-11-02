@@ -10,4 +10,6 @@ public interface SecurityService {
     String createSession(User user);
 
     boolean logoutSession(String uuid);
+
+    User getUser(String uuid);
 }

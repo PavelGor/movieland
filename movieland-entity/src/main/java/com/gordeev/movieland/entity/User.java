@@ -1,6 +1,7 @@
 package com.gordeev.movieland.entity;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.gordeev.movieland.vo.UserRole;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class User {
@@ -8,6 +9,7 @@ public class User {
     private String nickname;
     private String email;
     private String password;
+    private UserRole userRole;
 
     public int getId() {
         return id;
@@ -39,5 +41,13 @@ public class User {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public UserRole getUserRole() {
+        return userRole;
+    }
+
+    public void setUserRole(UserRole userRole) {
+        this.userRole = userRole;
     }
 }
