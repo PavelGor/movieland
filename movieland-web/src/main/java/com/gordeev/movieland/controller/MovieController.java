@@ -1,7 +1,9 @@
 package com.gordeev.movieland.controller;
 
+import com.gordeev.movieland.controller.util.CurrencyConverter;
 import com.gordeev.movieland.controller.util.SortDirectionConverter;
 import com.gordeev.movieland.entity.Movie;
+import com.gordeev.movieland.vo.Currency;
 import com.gordeev.movieland.vo.RequestParameter;
 import com.gordeev.movieland.service.MovieService;
 import com.gordeev.movieland.vo.SortDirection;
@@ -24,6 +26,11 @@ public class MovieController {
     @InitBinder
     protected void sortingBinder(final WebDataBinder binder) {
         binder.registerCustomEditor(SortDirection.class, new SortDirectionConverter());
+    }
+
+    @InitBinder
+    protected void currencyBinder(final WebDataBinder binder) {
+        binder.registerCustomEditor(Currency.class, new CurrencyConverter());
     }
 
     @RequestMapping(method = RequestMethod.GET)
@@ -49,7 +56,11 @@ public class MovieController {
     }
 
     @RequestMapping(value = "/{movieId}", method = RequestMethod.GET)
-    protected Movie getMovieById(@PathVariable int movieId) {
-        return movieService.getMovieById(movieId);
+    protected Movie getMovieById(@RequestParam(value = "currency", required = false) Currency currency,
+                                 @PathVariable int movieId) {
+        if (currency == null){
+            currency = Currency.UAH;
+        }
+        return movieService.getMovieById(movieId, currency);
     }
 }

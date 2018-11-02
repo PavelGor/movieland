@@ -7,6 +7,8 @@ import com.gordeev.movieland.service.CountryService;
 import com.gordeev.movieland.service.GenreService;
 import com.gordeev.movieland.service.MovieService;
 import com.gordeev.movieland.service.ReviewService;
+import com.gordeev.movieland.service.impl.util.ExchangeRateService;
+import com.gordeev.movieland.vo.Currency;
 import com.gordeev.movieland.vo.RequestParameter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -19,13 +21,15 @@ public class DefaultMovieService implements MovieService {
     private GenreService genreService;
     private CountryService countryService;
     private ReviewService reviewService;
+    private ExchangeRateService exchangeRateService;
 
     @Autowired
-    public DefaultMovieService(MovieDao movieDao, GenreService genreService, CountryService countryService, ReviewService reviewService) {
+    public DefaultMovieService(MovieDao movieDao, GenreService genreService, CountryService countryService, ReviewService reviewService, ExchangeRateService exchangeRateService) {
         this.countryService = countryService;
         this.genreService = genreService;
         this.movieDao = movieDao;
         this.reviewService = reviewService;
+        this.exchangeRateService = exchangeRateService;
     }
 
     @Override
@@ -66,16 +70,22 @@ public class DefaultMovieService implements MovieService {
     }
 
     @Override
-    public Movie getMovieById(int movieId) {
+    public Movie getMovieById(int movieId, Currency currency) {
         List<Movie> movies = movieDao.getMoviesByIds(Collections.singletonList(movieId));
 
+        //enrich with genres and countries
         enrich(movies);
 
         Movie movie = movies.get(0);
 
+        //enrich with reviews
         List<Review> reviews = reviewService.getByMovieId(movie.getId());
-
         movie.setReviews(reviews);
+
+        //set currency
+        Map<Currency, Double> exchangeRatesMap = exchangeRateService.getExchangeRatesMap();
+        double rate = exchangeRatesMap.get(currency);
+        if (currency != Currency.UAH) { movie.setPrice(movie.getPrice()/rate);}
 
         return movie;
     }
