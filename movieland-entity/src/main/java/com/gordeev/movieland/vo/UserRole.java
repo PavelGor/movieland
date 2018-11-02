@@ -6,7 +6,7 @@ public enum UserRole {
     private final String name;
 
     UserRole(String name) {
-        this.name = name.trim();
+        this.name = name;
     }
 
     public String getName() {
@@ -15,7 +15,7 @@ public enum UserRole {
 
     public static UserRole getByName(String name) {
         for(UserRole userRole : values()){
-            if (userRole.name.equalsIgnoreCase(name.trim())){
+            if (userRole.name.equalsIgnoreCase(name)){
                 return userRole;
             }
         }

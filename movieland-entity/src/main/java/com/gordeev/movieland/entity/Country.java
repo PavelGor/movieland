@@ -1,34 +1,22 @@
 package com.gordeev.movieland.entity;
 
 import java.util.Objects;
-//TODO: immutable?
-public class Country {
-    private int id;
-    private String name;
+
+public final class Country {
+    private final int id;
+    private final String name;
 
     public Country(int id, String name) {
         this.id = id;
         this.name = name;
     }
 
-    public Country() {
-
-    }
-
     public int getId() {
         return id;
     }
 
-    public void setId(int id) {
-        this.id = id;
-    }
-
     public String getName() {
         return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
     }
 
     @Override
@@ -42,7 +30,6 @@ public class Country {
 
     @Override
     public int hashCode() {
-
         return Objects.hash(id, name);
     }
 

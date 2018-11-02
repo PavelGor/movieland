@@ -17,12 +17,8 @@ class JdbcCountryDaoTest extends GroovyTestCase {
 
     @Test
     void testGetAll() {
-        Country firstCountry = new Country()
-        firstCountry.setId(1)
-        firstCountry.setName("Франция")
-        Country secondCountry = new Country()
-        secondCountry.setId(2)
-        secondCountry.setName("Италия")
+        Country firstCountry = new Country(1, "Франция")
+        Country secondCountry = new Country(2, "Италия")
 
         List<Country> genres = countryDao.getAll()
 
