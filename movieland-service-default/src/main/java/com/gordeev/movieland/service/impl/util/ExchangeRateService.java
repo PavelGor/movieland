@@ -26,11 +26,11 @@ public class ExchangeRateService {
     private Map<Currency, Double> exchangeRatesMap;
 
     @Value("${exchangeRate.url}")
-    private String urlForExchangeRate;
+    String urlForExchangeRate;
 
     @PostConstruct
     @Scheduled(fixedRateString = "${exchangeRate.maxLifeTime}", initialDelayString = "${exchangeRate.maxLifeTime}")
-    private void getExchangeRateFromBank() {
+    void getExchangeRateFromBank() {
 
         try {
             logger.info("Start to get exchange rate from Bank");

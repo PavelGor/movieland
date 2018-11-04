@@ -2,6 +2,7 @@ package com.gordeev.movieland.dao.cache;
 
 import com.gordeev.movieland.dao.CountryDao;
 import com.gordeev.movieland.entity.Country;
+import com.gordeev.movieland.entity.Movie;
 import com.gordeev.movieland.vo.MovieToCountiesVo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,5 +44,15 @@ public class CountryCache implements CountryDao {
     @Override
     public List<MovieToCountiesVo> getCountriesForMovies(List<Integer> moviesIds) {
         return countryDao.getCountriesForMovies(moviesIds);
+    }
+
+    @Override
+    public void addToMovie(Movie movie) {
+        countryDao.addToMovie(movie);
+    }
+
+    @Override
+    public void removeFromMovie(Movie movie) {
+        countryDao.removeFromMovie(movie);
     }
 }

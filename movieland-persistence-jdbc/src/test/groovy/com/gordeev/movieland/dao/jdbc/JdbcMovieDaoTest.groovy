@@ -53,7 +53,7 @@ class JdbcMovieDaoTest extends GroovyTestCase {
     void testGetAllMovie() {
         List<Movie> actualMovies = movieDao.getAll()
 
-        assertTrue(actualMovies.size() == 25)
+        assertTrue(actualMovies.size() == 26)
 
         assertEqualsList(actualMovies)
     }
@@ -96,6 +96,43 @@ class JdbcMovieDaoTest extends GroovyTestCase {
 
         assertEquals(expectedMovies.get(0).getId(), actualMovies.get(0).getId())
         assertEquals(expectedMovies.get(1).getId(), actualMovies.get(1).getId())
+    }
+
+    @Test
+    void testAdd() {
+        Movie expectedMovie = new Movie()
+        expectedMovie.setNameRussian("newRussian")
+        expectedMovie.setNameNative("newNative")
+        expectedMovie.setYearOfRelease(2222)
+        expectedMovie.setDescription("newDescription")
+        expectedMovie.setPrice(10)
+        expectedMovie.setPicturePath("newPicturePath")
+
+        movieDao.add(expectedMovie)
+        List<Movie> actualMovies = movieDao.getMoviesByIds(Arrays.asList(26))
+        Movie actualMovie = actualMovies.get(0)
+
+        assertEquals(26, expectedMovie.getId())
+        assertEquals(expectedMovie, actualMovie)
+    }
+
+    @Test
+    void testUpdate() {
+        Movie expectedMovie = new Movie()
+        expectedMovie.setId(1)
+        expectedMovie.setNameRussian("newRussian")
+        expectedMovie.setNameNative("newNative")
+        expectedMovie.setYearOfRelease(2222)
+        expectedMovie.setDescription("newDescription")
+        expectedMovie.setPrice(10)
+        expectedMovie.setPicturePath("newPicturePath")
+
+        movieDao.update(expectedMovie)
+
+        List<Movie> actualMovies = movieDao.getMoviesByIds(Arrays.asList(1))
+        Movie actualMovie = actualMovies.get(0)
+
+        assertEquals(expectedMovie, actualMovie)
     }
 
     private void assertEqualsList(List<Movie> actualMovies) {

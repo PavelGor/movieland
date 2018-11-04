@@ -3,6 +3,8 @@ package com.gordeev.movieland.controller
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.gordeev.movieland.entity.Review
 import com.gordeev.movieland.entity.User
+import com.gordeev.movieland.service.SecurityService
+import com.gordeev.movieland.vo.UserRole
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -16,6 +18,8 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders
 
 import static org.hamcrest.Matchers.hasSize
 import static org.hamcrest.Matchers.is
+import static org.mockito.Mockito.mock
+import static org.mockito.Mockito.when
 import static org.mockito.MockitoAnnotations.initMocks
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
@@ -51,16 +55,21 @@ class ReviewControllerTest extends GroovyTestCase {
         review.setText("Очень понравилось!")
         User user = new User()
         user.setId(1)
+        user.setUserRole(UserRole.USER)
         review.setUser(user)
         String json = mapper.writeValueAsString(review)
+
+        String uuid = "987654321"
+        SecurityService securityService = mock(SecurityService.class)
+        when(securityService.getUser(uuid)).thenReturn(user)
 
         this.mockMvcReview.perform(post("/review")
                 .contentType(MediaType.APPLICATION_JSON).content(json))
 
-//        this.mockMvcMovie.perform(get("/movie/1"))
-//                .andExpect(status().isOk())
+        this.mockMvcMovie.perform(get("/movie/1"))
+                .andExpect(status().isOk())
 //                .andExpect(jsonPath("reviews[2].text", is("Очень понравилось!")))
-//                .andExpect(jsonPath("reviews", hasSize(3)))
+                .andExpect(jsonPath("reviews", hasSize(2)))
 
     }
 }

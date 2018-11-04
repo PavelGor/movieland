@@ -51,5 +51,15 @@ public class DefaultGenreService implements GenreService {
         return genreDao.getMoviesIdsByGenreId(genreId);
     }
 
+    @Override
+    public void addToMovie(Movie movie) {
+        genreDao.addToMovie(movie);
+    }
+
+    @Override
+    public void removeFromMovie(Movie movie) {
+        genreDao.removeFromMovie(movie);
+    }
+
 
 }

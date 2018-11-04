@@ -1,10 +1,15 @@
 package com.gordeev.movieland.controller
 
 import com.gordeev.movieland.entity.Movie
+import com.gordeev.movieland.entity.User
+import com.gordeev.movieland.service.SecurityService
+import com.gordeev.movieland.vo.UserRole
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.mockito.Mock
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.http.MediaType
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner
 import org.springframework.test.context.web.WebAppConfiguration
@@ -15,6 +20,8 @@ import static org.hamcrest.Matchers.*
 import static org.mockito.MockitoAnnotations.initMocks
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*
+import static org.mockito.Mockito.mock
+import static org.mockito.Mockito.doReturn
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = "classpath:spring/test-context.xml")
@@ -26,6 +33,8 @@ class MovieControllerTest extends GroovyTestCase {
 
     @Autowired
     private MovieController controller
+    @Mock
+    private SecurityService securityService
 
     @Before
     void setup() {
@@ -118,5 +127,68 @@ class MovieControllerTest extends GroovyTestCase {
                 .andExpect(jsonPath("picturePath", is(expectedFirstMovie.getPicturePath())))
                 .andExpect(jsonPath("reviews[0].text", is("Гениальное кино! Смотришь и думаешь «Так не бывает!», но позже понимаешь, что только так и должно быть. Начинаешь заново осмысливать значение фразы, которую постоянно используешь в своей жизни, «Надежда умирает последней». Ведь если ты не надеешься, то все в твоей жизни гаснет, не остается смысла. Фильм наполнен бесконечным числом правильных афоризмов. Я уверена, что буду пересматривать его сотни раз.")))
                 .andExpect(jsonPath("reviews", hasSize(2)))
+    }
+
+    @Test
+    void testAdd() throws Exception {
+        User user = new User()
+        user.setId(1)
+        user.setNickname("TestNickname")
+        user.setUserRole(UserRole.ADMIN)
+
+        String json = "{\n" +
+                "     \"nameRussian\": \"Побег из Шоушенка\",\n" +
+                "     \"nameNative\": \"The Shawshank Redemption\",\n" +
+                "     \"yearOfRelease\": \"1994\",\n" +
+                "     \"description\": \"Успешный банкир Энди Дюфрейн обвинен в убийстве собственной жены и ее любовника. Оказавшись в тюрьме под названием Шоушенк, он сталкивается с жестокостью и беззаконием, царящими по обе стороны решетки. Каждый, кто попадает в эти стены, становится их рабом до конца жизни. Но Энди, вооруженный живым умом и доброй душой, отказывается мириться с приговором судьбы и начинает разрабатывать невероятно дерзкий план своего освобождения.\",\n" +
+                "     \"price\": 123.45,\n" +
+                "     \"picturePath\": \"https://images-na.ssl-images-amazon.com/images/M/MV5BODU4MjU4NjIwNl5BMl5BanBnXkFtZTgwMDU2MjEyMDE@._V1._SY209_CR0,0,140,209_.jpg\",\n" +
+                "     \"countries\": [1,2],\n" +
+                "     \"genres\": [1,2,3]\n" +
+                "}"
+
+        String uuid = "987654321"
+        doReturn(user).when(securityService).getUser(uuid)
+
+        mockMvc.perform(post("/movie/")
+                .contentType(MediaType.APPLICATION_JSON)
+                .header("uuid", uuid)
+                .content(json)
+        ).andExpect(status().isOk())
+
+        this.mockMvc.perform(get("/movie"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("\$", hasSize(25)))
+    }
+
+    @Test
+    void testUpdate() throws Exception {
+        User user = new User()
+        user.setId(1)
+        user.setNickname("TestNickname")
+        user.setUserRole(UserRole.ADMIN)
+
+        String json = "{\n" +
+                "     \"nameRussian\": \"Шоушенк\",\n" +
+                "     \"nameNative\": \"The Shawshank\",\n" +
+                "     \"yearOfRelease\": \"1994\",\n" +
+                "     \"price\": 123.45,\n" +
+                "     \"countries\": [1,2],\n" +
+                "     \"genres\": [1,2,3]\n" +
+                "}"
+
+        String uuid = "987654321"
+        doReturn(user).when(securityService).getUser(uuid)
+
+        mockMvc.perform(post("/movie/1")
+                .contentType(MediaType.APPLICATION_JSON)
+                .header("uuid", uuid)
+                .content(json)
+        ).andExpect(status().isOk())
+
+        this.mockMvc.perform(get("/movie"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("\$", hasSize(25)))
+                .andExpect(jsonPath("\$[0].nameRussian", is("Побег из Шоушенка")))
     }
 }

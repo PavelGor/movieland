@@ -12,6 +12,7 @@ import com.gordeev.movieland.vo.Currency;
 import com.gordeev.movieland.vo.RequestParameter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 
@@ -88,6 +89,26 @@ public class DefaultMovieService implements MovieService {
         if (currency != Currency.UAH) { movie.setPrice(movie.getPrice()/rate);}
 
         return movie;
+    }
+
+    @Override
+    @Transactional
+    public void add(Movie movie) {
+        movieDao.add(movie);
+        countryService.addToMovie(movie);
+        genreService.addToMovie(movie);
+    }
+
+    @Override
+    @Transactional
+    public void update(Movie movie) {
+        movieDao.update(movie);
+
+        countryService.removeFromMovie(movie);
+        countryService.addToMovie(movie);
+
+        genreService.removeFromMovie(movie);
+        genreService.addToMovie(movie);
     }
 
     private void enrich(List<Movie> movies) {

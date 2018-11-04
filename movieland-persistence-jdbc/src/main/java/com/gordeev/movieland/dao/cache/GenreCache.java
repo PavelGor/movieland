@@ -2,6 +2,7 @@ package com.gordeev.movieland.dao.cache;
 
 import com.gordeev.movieland.dao.GenreDao;
 import com.gordeev.movieland.entity.Genre;
+import com.gordeev.movieland.entity.Movie;
 import com.gordeev.movieland.vo.MovieToGenresVO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -46,5 +47,15 @@ public class GenreCache implements GenreDao{
     @Override
     public List<Integer> getMoviesIdsByGenreId(int genreId) {
         return genreDao.getMoviesIdsByGenreId(genreId);
+    }
+
+    @Override
+    public void addToMovie(Movie movie) {
+        genreDao.addToMovie(movie);
+    }
+
+    @Override
+    public void removeFromMovie(Movie movie) {
+        genreDao.removeFromMovie(movie);
     }
 }

@@ -2,25 +2,35 @@ package com.gordeev.movieland.controller;
 
 import com.gordeev.movieland.controller.util.CurrencyConverter;
 import com.gordeev.movieland.controller.util.SortDirectionConverter;
+import com.gordeev.movieland.controller.vo.MovieVO;
+import com.gordeev.movieland.entity.Country;
+import com.gordeev.movieland.entity.Genre;
 import com.gordeev.movieland.entity.Movie;
+import com.gordeev.movieland.entity.User;
+import com.gordeev.movieland.service.SecurityService;
 import com.gordeev.movieland.vo.Currency;
 import com.gordeev.movieland.vo.RequestParameter;
 import com.gordeev.movieland.service.MovieService;
 import com.gordeev.movieland.vo.SortDirection;
+import com.gordeev.movieland.vo.UserRole;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
 @RequestMapping("/movie")
 public class MovieController {
     private MovieService movieService;
+    private SecurityService securityService;
 
     @Autowired
-    public MovieController(MovieService movieService) {
+    public MovieController(MovieService movieService, SecurityService securityService) {
         this.movieService = movieService;
+        this.securityService = securityService;
     }
 
     @InitBinder
@@ -62,5 +72,53 @@ public class MovieController {
             currency = Currency.UAH;
         }
         return movieService.getMovieById(movieId, currency);
+    }
+
+    @RequestMapping(method = RequestMethod.POST)
+    protected void add(@RequestBody MovieVO movieVO, @RequestHeader("uuid") String uuid) { //TODO: need ResponseEntity??? or Exception
+        User user = securityService.getUser(uuid);
+        if (user != null && UserRole.ADMIN == user.getUserRole()){
+            Movie movie = transform(movieVO);
+            movieService.add(movie);
+        }
+    }
+
+    @RequestMapping(value = "/{id}", method = RequestMethod.PUT)
+    protected void update(@RequestBody MovieVO movieVO,
+                          @RequestHeader("uuid") String uuid,
+                          @PathVariable int id) {
+        User user = securityService.getUser(uuid);
+        if (user != null && UserRole.ADMIN == user.getUserRole()){
+            Movie movie = transform(movieVO);
+            movie.setId(id);
+            movieService.update(movie);
+        }
+    }
+
+    private Movie transform(MovieVO movieVO) {
+        Movie movie = new Movie();
+        movie.setNameRussian(movieVO.getNameRussian());
+        movie.setNameNative(movieVO.getNameNative());
+        movie.setYearOfRelease(movieVO.getYearOfRelease());
+        movie.setDescription(movieVO.getDescription());
+        movie.setRating(movieVO.getRating());
+        movie.setPrice(movieVO.getPrice());
+        movie.setPicturePath(movieVO.getPicturePath());
+
+        List<Country> countries = new ArrayList<>();
+        for (Integer countryId : movieVO.getCountryIds()) {
+            Country country = new Country(countryId, "empty");
+            countries.add(country);
+        }
+        movie.setCountries(countries);
+
+        List<Genre> genres = new ArrayList<>();
+        for (Integer genreId : movieVO.getGenreIds()) {
+            Genre genre = new Genre(genreId, "empty");
+            genres.add(genre);
+        }
+        movie.setGenres(genres);
+
+        return movie;
     }
 }

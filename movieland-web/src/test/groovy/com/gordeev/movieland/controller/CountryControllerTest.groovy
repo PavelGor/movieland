@@ -33,7 +33,7 @@ class CountryControllerTest extends GroovyTestCase {
         this.mockMvc = MockMvcBuilders.standaloneSetup(countryController).build()
     }
     @Test
-    void testGetAllGenre() {
+    void testGetAllCountries() {
         Country firstCountry = new Country(1, "Франция")
         Country secondCountry = new Country(2, "Италия")
 

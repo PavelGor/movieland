@@ -45,4 +45,14 @@ public class DefaultCountryService implements CountryService {
             movie.setCountries(countriesForMoviesMap.get(movieId));
         }
     }
+
+    @Override
+    public void addToMovie(Movie movie) {
+        countryDao.addToMovie(movie);
+    }
+
+    @Override
+    public void removeFromMovie(Movie movie) {
+        countryDao.removeFromMovie(movie);
+    }
 }

@@ -14,4 +14,8 @@ public interface MovieDao {
     List<Movie> getMoviesByIds(List<Integer> moviesIds);
 
     List<Movie> getAll();
+
+    void add(Movie movie);
+
+    void update(Movie movie);
 }

@@ -17,4 +17,8 @@ public interface MovieService {
     List<Movie> getAll();
 
     Movie getMovieById(int movieId, Currency currency);
+
+    void add(Movie movie);
+
+    void update(Movie movie);
 }
