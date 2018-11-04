@@ -9,14 +9,6 @@ public class Session {
     private LocalDateTime expireTime;
     private String uuid;
 
-    public Session(String uuid) {
-        this.uuid = uuid;
-    }
-
-    public Session() {
-
-    }
-
     public User getUser() {
         return user;
     }

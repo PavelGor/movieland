@@ -6,6 +6,7 @@ import com.gordeev.movieland.entity.Movie;
 import java.util.List;
 
 public interface GenreService {
+
     List<Genre> getAll();
 
     void enrich(List<Movie> movies);

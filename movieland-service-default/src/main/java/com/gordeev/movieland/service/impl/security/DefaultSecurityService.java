@@ -17,7 +17,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Service
-public class DefaultSecurityService implements SecurityService{
+public class DefaultSecurityService implements SecurityService {
     @Value("${session.age}")
     private int sessionMaxLifeTime;
     private UserService userService;
@@ -35,13 +35,13 @@ public class DefaultSecurityService implements SecurityService{
 
     @PostConstruct
     @Scheduled(fixedRateString = "${session.age}", initialDelayString = "${session.age}")
-    private void invalidate(){
+    private void invalidate() {
         LocalDateTime currentTime = LocalDateTime.now();
         for (Session session : sessionList) {
             LocalDateTime sessionExpireTime = session.getExpireTime();
-                if (currentTime.isAfter(sessionExpireTime)) {
-                    sessionList.remove(session);
-                }
+            if (currentTime.isAfter(sessionExpireTime)) {
+                sessionList.remove(session);
+            }
         }
     }
 

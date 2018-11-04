@@ -14,8 +14,8 @@ public enum Currency {
     }
 
     public static Currency getByName(String name) {
-        for(Currency currency : values()){
-            if (currency.name.equalsIgnoreCase(name)){
+        for (Currency currency : values()) {
+            if (currency.name.equalsIgnoreCase(name)) {
                 return currency;
             }
         }

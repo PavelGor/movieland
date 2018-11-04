@@ -20,7 +20,7 @@ class JdbcMovieDaoTest extends GroovyTestCase {
     private MovieDao movieDao
 
     @Before
-    void setUp(){
+    void setUp() {
         //List of movies setUp
         expectedMovies = new ArrayList<>()
         Movie firstMovie = new Movie()
@@ -133,6 +133,16 @@ class JdbcMovieDaoTest extends GroovyTestCase {
         Movie actualMovie = actualMovies.get(0)
 
         assertEquals(expectedMovie, actualMovie)
+    }
+
+    @Test
+    void testGenerateSql() {
+        RequestParameter requestParameter = new RequestParameter("testFieldname", SortDirection.ASC)
+        String expectedSQLString = "SELECT * FROM movie ORDER BY  testFieldname asc"
+
+        String actualSQLString = JdbcMovieDao.generateSql(requestParameter)
+
+        assertEquals(expectedSQLString, actualSQLString)
     }
 
     private void assertEqualsList(List<Movie> actualMovies) {

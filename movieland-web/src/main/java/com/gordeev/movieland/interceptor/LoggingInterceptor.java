@@ -11,12 +11,12 @@ import javax.servlet.http.HttpSession;
 import java.util.UUID;
 
 @Component
-public class LoggingInterceptor  extends HandlerInterceptorAdapter {
+public class LoggingInterceptor extends HandlerInterceptorAdapter {
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
         HttpSession session = request.getSession();
         User user = (User) session.getAttribute("user");
-        if (user != null){
+        if (user != null) {
             MDC.put("user", user.getEmail());
         } else {
             MDC.put("user", "Guest");
@@ -26,7 +26,7 @@ public class LoggingInterceptor  extends HandlerInterceptorAdapter {
     }
 
     @Override
-    public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex)  {
+    public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) {
         MDC.clear();
     }
 }

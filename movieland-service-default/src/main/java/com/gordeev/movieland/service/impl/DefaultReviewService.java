@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service;
 import java.util.*;
 
 @Service
-public class DefaultReviewService implements ReviewService{
+public class DefaultReviewService implements ReviewService {
     private ReviewDao reviewDao;
     private UserService userService;
 

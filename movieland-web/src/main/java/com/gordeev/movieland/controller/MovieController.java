@@ -68,31 +68,33 @@ public class MovieController {
     @RequestMapping(value = "/{movieId}", method = RequestMethod.GET)
     protected Movie getMovieById(@RequestParam(value = "currency", required = false) Currency currency,
                                  @PathVariable int movieId) {
-        if (currency == null){
+        if (currency == null) {
             currency = Currency.UAH;
         }
         return movieService.getMovieById(movieId, currency);
     }
 
     @RequestMapping(method = RequestMethod.POST)
-    protected void add(@RequestBody MovieVO movieVO, @RequestHeader("uuid") String uuid) { //TODO: need ResponseEntity??? or Exception
+    protected ResponseEntity add(@RequestBody MovieVO movieVO, @RequestHeader("uuid") String uuid) {
         User user = securityService.getUser(uuid);
-        if (user != null && UserRole.ADMIN == user.getUserRole()){
+        if (user != null && UserRole.ADMIN == user.getUserRole()) {
             Movie movie = transform(movieVO);
             movieService.add(movie);
         }
+        return ResponseEntity.ok().build();
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.PUT)
-    protected void update(@RequestBody MovieVO movieVO,
-                          @RequestHeader("uuid") String uuid,
-                          @PathVariable int id) {
+    protected ResponseEntity update(@RequestBody MovieVO movieVO,
+                                    @RequestHeader("uuid") String uuid,
+                                    @PathVariable int id) {
         User user = securityService.getUser(uuid);
-        if (user != null && UserRole.ADMIN == user.getUserRole()){
+        if (user != null && UserRole.ADMIN == user.getUserRole()) {
             Movie movie = transform(movieVO);
             movie.setId(id);
             movieService.update(movie);
         }
+        return ResponseEntity.ok().build();
     }
 
     private Movie transform(MovieVO movieVO) {

@@ -20,7 +20,6 @@ import static org.hamcrest.Matchers.*
 import static org.mockito.MockitoAnnotations.initMocks
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*
-import static org.mockito.Mockito.mock
 import static org.mockito.Mockito.doReturn
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -180,7 +179,7 @@ class MovieControllerTest extends GroovyTestCase {
         String uuid = "987654321"
         doReturn(user).when(securityService).getUser(uuid)
 
-        mockMvc.perform(post("/movie/1")
+        mockMvc.perform(put("/movie/1")
                 .contentType(MediaType.APPLICATION_JSON)
                 .header("uuid", uuid)
                 .content(json)

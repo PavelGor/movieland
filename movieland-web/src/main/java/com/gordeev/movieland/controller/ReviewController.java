@@ -23,7 +23,7 @@ public class ReviewController {
     @RequestMapping(method = RequestMethod.POST)
     protected void add(@RequestBody Review review, @RequestHeader("uuid") String uuid) {
         User user = securityService.getUser(uuid);
-        if (user != null && UserRole.USER == user.getUserRole()){
+        if (user != null && UserRole.USER == user.getUserRole()) {
             review.setUser(user);
             reviewService.add(review);
         }

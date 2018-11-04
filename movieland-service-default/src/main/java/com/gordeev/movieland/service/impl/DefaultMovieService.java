@@ -24,15 +24,6 @@ public class DefaultMovieService implements MovieService {
     private ReviewService reviewService;
     private ExchangeRateService exchangeRateService;
 
-    @Autowired
-    public DefaultMovieService(MovieDao movieDao, GenreService genreService, CountryService countryService, ReviewService reviewService, ExchangeRateService exchangeRateService) {
-        this.countryService = countryService;
-        this.genreService = genreService;
-        this.movieDao = movieDao;
-        this.reviewService = reviewService;
-        this.exchangeRateService = exchangeRateService;
-    }
-
     @Override
     public List<Movie> getAll(RequestParameter requestParameter) {
         List<Movie> movies = movieDao.getAll(requestParameter);
@@ -86,7 +77,9 @@ public class DefaultMovieService implements MovieService {
         //set currency
         Map<Currency, Double> exchangeRatesMap = exchangeRateService.getExchangeRatesMap();
         double rate = exchangeRatesMap.get(currency);
-        if (currency != Currency.UAH) { movie.setPrice(movie.getPrice()/rate);}
+        if (currency != Currency.UAH) {
+            movie.setPrice(movie.getPrice() / rate);
+        }
 
         return movie;
     }
@@ -114,5 +107,30 @@ public class DefaultMovieService implements MovieService {
     private void enrich(List<Movie> movies) {
         genreService.enrich(movies);
         countryService.enrich(movies);
+    }
+
+    @Autowired
+    public void setMovieDao(MovieDao movieDao) {
+        this.movieDao = movieDao;
+    }
+
+    @Autowired
+    public void setGenreService(GenreService genreService) {
+        this.genreService = genreService;
+    }
+
+    @Autowired
+    public void setCountryService(CountryService countryService) {
+        this.countryService = countryService;
+    }
+
+    @Autowired
+    public void setReviewService(ReviewService reviewService) {
+        this.reviewService = reviewService;
+    }
+
+    @Autowired
+    public void setExchangeRateService(ExchangeRateService exchangeRateService) {
+        this.exchangeRateService = exchangeRateService;
     }
 }

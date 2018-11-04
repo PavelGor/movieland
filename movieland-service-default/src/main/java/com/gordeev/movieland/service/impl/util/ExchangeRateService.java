@@ -46,10 +46,10 @@ public class ExchangeRateService {
 
             for (ExchangeRate rate : exchangeRates) {
                 if (Currency.UAH.getName().equals(rate.getBaseCurrency())) {
-                    if (Currency.USD.getName().equals(rate.getCcy())){
+                    if (Currency.USD.getName().equals(rate.getCcy())) {
                         exchangeRatesMap.put(Currency.USD, Double.parseDouble(rate.getSale()));
                     }
-                    if (Currency.EUR.getName().equals(rate.getCcy())){
+                    if (Currency.EUR.getName().equals(rate.getCcy())) {
                         exchangeRatesMap.put(Currency.EUR, Double.parseDouble(rate.getSale()));
                     }
                     exchangeRatesMap.put(Currency.UAH, 1.0);

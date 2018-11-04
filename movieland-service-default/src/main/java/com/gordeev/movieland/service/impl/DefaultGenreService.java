@@ -34,8 +34,8 @@ public class DefaultGenreService implements GenreService {
             moviesIds.add(movie.getId());
         }
 
-        List<MovieToGenresVO>  genresForMoviesVO = genreDao.getGenresForMovies(moviesIds);
-        Map<Integer, List<Genre>>  genresForMoviesMap = new HashMap<>();
+        List<MovieToGenresVO> genresForMoviesVO = genreDao.getGenresForMovies(moviesIds);
+        Map<Integer, List<Genre>> genresForMoviesMap = new HashMap<>();
         for (MovieToGenresVO movieToGenresVO : genresForMoviesVO) {
             genresForMoviesMap.put(movieToGenresVO.getMovieId(), movieToGenresVO.getGenres());
         }

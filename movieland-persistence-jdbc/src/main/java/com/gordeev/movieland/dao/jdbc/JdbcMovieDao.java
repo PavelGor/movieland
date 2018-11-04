@@ -43,8 +43,8 @@ public class JdbcMovieDao implements MovieDao {
     public List<Movie> getAll(RequestParameter requestParameter) {
         logger.info("Start processing query to get all movies ordered by column: {} and direction is: {}", requestParameter.getFieldName(), requestParameter.getSortDirection());
         long startTime = System.currentTimeMillis();
-        //TODO: Tests!!! create query generator
-        String sql = GET_ALL_ORDERED_MOVIE_SQL + " " + requestParameter.getFieldName() + " " + requestParameter.getSortDirection().getName();
+
+        String sql = generateSql(requestParameter);
 
         List<Movie> movies = jdbcTemplate.query(sql, MOVIE_ROW_MAPPER);
 
@@ -93,14 +93,7 @@ public class JdbcMovieDao implements MovieDao {
         logger.info("Start processing query to add new movie");
         long startTime = System.currentTimeMillis();
 
-        MapSqlParameterSource parameterSource = new MapSqlParameterSource();
-        parameterSource.addValue("nameRussian", movie.getNameRussian());
-        parameterSource.addValue("nameNative", movie.getNameNative());
-        parameterSource.addValue("yearOfRelease", movie.getYearOfRelease());
-        parameterSource.addValue("description", movie.getDescription());
-        parameterSource.addValue("rating", movie.getRating());
-        parameterSource.addValue("price", movie.getPrice());
-        parameterSource.addValue("picturePath", movie.getPicturePath());
+        MapSqlParameterSource parameterSource = getParameterSource(movie);
 
         KeyHolder keyHolder = new GeneratedKeyHolder();
         namedParameterJdbcTemplate.update(ADD_MOVIE_SQL, parameterSource, keyHolder);
@@ -133,5 +126,21 @@ public class JdbcMovieDao implements MovieDao {
                 movie.getId());
 
         logger.info("Finish processing query to update movie. It took {} ms", System.currentTimeMillis() - startTime);
+    }
+
+    private MapSqlParameterSource getParameterSource(Movie movie) {
+        MapSqlParameterSource parameterSource = new MapSqlParameterSource();
+        parameterSource.addValue("nameRussian", movie.getNameRussian());
+        parameterSource.addValue("nameNative", movie.getNameNative());
+        parameterSource.addValue("yearOfRelease", movie.getYearOfRelease());
+        parameterSource.addValue("description", movie.getDescription());
+        parameterSource.addValue("rating", movie.getRating());
+        parameterSource.addValue("price", movie.getPrice());
+        parameterSource.addValue("picturePath", movie.getPicturePath());
+        return parameterSource;
+    }
+
+    static String generateSql(RequestParameter requestParameter) {
+        return GET_ALL_ORDERED_MOVIE_SQL + " " + requestParameter.getFieldName() + " " + requestParameter.getSortDirection().getName();
     }
 }

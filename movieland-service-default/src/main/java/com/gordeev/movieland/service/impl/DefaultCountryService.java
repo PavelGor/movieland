@@ -34,8 +34,8 @@ public class DefaultCountryService implements CountryService {
             moviesIds.add(movie.getId());
         }
 
-        List<MovieToCountiesVo>  countriesForMoviesVO = countryDao.getCountriesForMovies(moviesIds);
-        Map<Integer, List<Country>>  countriesForMoviesMap = new HashMap<>();
+        List<MovieToCountiesVo> countriesForMoviesVO = countryDao.getCountriesForMovies(moviesIds);
+        Map<Integer, List<Country>> countriesForMoviesMap = new HashMap<>();
         for (MovieToCountiesVo movieToCountiesVo : countriesForMoviesVO) {
             countriesForMoviesMap.put(movieToCountiesVo.getMovieId(), movieToCountiesVo.getCountries());
         }

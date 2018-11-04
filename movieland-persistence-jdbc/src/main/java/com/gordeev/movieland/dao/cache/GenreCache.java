@@ -16,7 +16,7 @@ import java.util.*;
 
 @Primary
 @Repository
-public class GenreCache implements GenreDao{
+public class GenreCache implements GenreDao {
     private final Logger logger = LoggerFactory.getLogger(getClass());
     private GenreDao genreDao;
 
@@ -30,8 +30,8 @@ public class GenreCache implements GenreDao{
     @PostConstruct
     @Scheduled(fixedRateString = "${cache.updateRate}", initialDelayString = "${cache.updateRate}")
     private void invalidate() {
-            this.genres = genreDao.getAll();
-            logger.info("Update all genres in cache from dao");
+        this.genres = genreDao.getAll();
+        logger.info("Update all genres in cache from dao");
     }
 
     public List<Genre> getAll() {
