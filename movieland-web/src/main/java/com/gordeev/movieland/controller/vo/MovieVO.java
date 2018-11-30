@@ -11,8 +11,8 @@ public class MovieVO {
     private double rating;
     private double price;
     private String picturePath;
-    private List<Integer> countryIds;
-    private List<Integer> genreIds;
+    private List<Integer> countries;
+    private List<Integer> genres;
 
     public int getId() {
         return id;
@@ -78,19 +78,19 @@ public class MovieVO {
         this.picturePath = picturePath;
     }
 
-    public List<Integer> getCountryIds() {
-        return countryIds;
+    public List<Integer> getCountries() {
+        return countries;
     }
 
-    public void setCountryIds(List<Integer> countryIds) {
-        this.countryIds = countryIds;
+    public void setCountries(List<Integer> countries) {
+        this.countries = countries;
     }
 
-    public List<Integer> getGenreIds() {
-        return genreIds;
+    public List<Integer> getGenres() {
+        return genres;
     }
 
-    public void setGenreIds(List<Integer> genreIds) {
-        this.genreIds = genreIds;
+    public void setGenres(List<Integer> genres) {
+        this.genres = genres;
     }
 }

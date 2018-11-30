@@ -30,7 +30,7 @@ class GenreControllerTest extends GroovyTestCase {
     @Before
     void setup() {
         initMocks(this)
-        this.mockMvc = MockMvcBuilders.standaloneSetup(controller).build()
+        mockMvc = MockMvcBuilders.standaloneSetup(controller).build()
     }
 
     @Test

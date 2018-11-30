@@ -8,6 +8,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class ReviewRowMapper implements RowMapper<Review> {
+
     @Override
     public Review mapRow(ResultSet resultSet, int rowNum) throws SQLException {
         Review review = new Review();

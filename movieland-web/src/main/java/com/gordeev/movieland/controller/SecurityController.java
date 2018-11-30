@@ -20,31 +20,31 @@ public class SecurityController {
     }
 
     @RequestMapping(value = "/login", method = RequestMethod.POST)
-    protected ResponseEntity login(@RequestBody User user) {
+    public ResponseEntity login(@RequestBody User user) {
         String uuid;
-        //if user exist in DB
+
         Optional<User> optionalUser = securityService.authenticate(user);
-        //add him to cache
+
         if (optionalUser.isPresent()){
             uuid = securityService.createSession(optionalUser.get());
-            //and generate UserVO
+
             UserVO userVO = new UserVO(uuid, optionalUser.get().getNickname());
             logger.info("User with uuid = {} successfully logged in", uuid);
             return ResponseEntity.ok(userVO);
         }
-        logger.info("Session of user: {} is not valid", user.getEmail());
+        logger.error("Session of user: {} is not valid", user.getEmail());
         return ResponseEntity.badRequest().build();
     }
 
     @RequestMapping(value = "/logout", method = RequestMethod.DELETE)
-    protected ResponseEntity logout(@RequestHeader("uuid") String uuid) {
+    public ResponseEntity logout(@RequestHeader("uuid") String uuid) {
 
         boolean isLoggedOut = securityService.logoutSession(uuid);
         if (isLoggedOut){
             logger.info("User with uuid = {} successfully logout", uuid);
             return ResponseEntity.ok().build();
         }
-        logger.info("Session with uuid = {} is not valid", uuid);
+        logger.error("Session with uuid = {} is not valid", uuid);
         return ResponseEntity.badRequest().build();
     }
 }

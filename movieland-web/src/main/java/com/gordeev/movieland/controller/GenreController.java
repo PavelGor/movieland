@@ -20,7 +20,7 @@ public class GenreController {
     }
 
     @RequestMapping(method = RequestMethod.GET)
-    protected List<Genre> getAllGenre() {
+    public List<Genre> getAllGenre() {
         return genreService.getAll();
     }
 }

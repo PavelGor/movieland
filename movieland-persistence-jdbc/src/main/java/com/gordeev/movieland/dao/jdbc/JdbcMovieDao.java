@@ -3,7 +3,7 @@ package com.gordeev.movieland.dao.jdbc;
 import com.gordeev.movieland.dao.MovieDao;
 import com.gordeev.movieland.dao.jdbc.mapper.MovieRowMapper;
 import com.gordeev.movieland.entity.Movie;
-import com.gordeev.movieland.vo.RequestParameter;
+import com.gordeev.movieland.entity.RequestParameter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,23 +20,21 @@ import java.util.Map;
 @Repository
 public class JdbcMovieDao implements MovieDao {
     private static final String GET_ALL_ORDERED_MOVIE_SQL = "SELECT * FROM movie ORDER BY ";
-    private static final String GET_ALL_MOVIE_SQL = "SELECT * FROM movie";
-    private static final String GET_THREE_RANDOM_MOVIE_SQL = "SELECT * FROM movie ORDER BY RANDOM() LIMIT 3";
-    private static final String GET_MOVIES_BY_IDS_SQL = "SELECT * FROM movie WHERE id IN (:moviesIds)";
+    private static final String GET_ALL_MOVIE_SQL = "SELECT id, name_ru, name_eng, year_release, description, round(rating::numeric,2) as rating, round(price::numeric,2) as price, poster FROM movie";
+    private static final String GET_THREE_RANDOM_MOVIE_SQL = "SELECT id, name_ru, name_eng, year_release, description, round(rating::numeric,2) as rating, round(price::numeric,2) as price, poster FROM movie ORDER BY RANDOM() LIMIT 3";
+    private static final String GET_MOVIES_BY_IDS_SQL = "SELECT id, name_ru, name_eng, year_release, description, round(rating::numeric,2) as rating, round(price::numeric,2) as price, poster FROM movie WHERE id IN (:moviesIds)";
     private static final String ADD_MOVIE_SQL = "INSERT INTO movie (name_ru, name_eng, year_release, description, rating, price, poster) VALUES (:nameRussian, :nameNative, :yearOfRelease, :description, :rating, :price, :picturePath)";
-    private static final String UPDATE_MOVIE_SQL = "UPDATE movie SET name_ru = ?, name_eng = ?, year_release = ?, description = ?, rating = ?, price = ?, poster = ? WHERE id = ?";
+    private static final String UPDATE_MOVIE_SQL = "UPDATE movie SET name_ru = :nameRussian, name_eng = :nameNative, year_release = :yearOfRelease, description = :description, rating = :rating, price = :price, poster = :picturePath WHERE id = :id";
 
     private static final RowMapper<Movie> MOVIE_ROW_MAPPER = new MovieRowMapper();
 
     private final Logger logger = LoggerFactory.getLogger(getClass());
 
-    private JdbcTemplate jdbcTemplate;
     private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
     @Autowired
-    public JdbcMovieDao(JdbcTemplate jdbcTemplate, NamedParameterJdbcTemplate namedParameterJdbcTemplate) {
+    public JdbcMovieDao(NamedParameterJdbcTemplate namedParameterJdbcTemplate) {
         this.namedParameterJdbcTemplate = namedParameterJdbcTemplate;
-        this.jdbcTemplate = jdbcTemplate;
     }
 
     @Override
@@ -44,9 +42,9 @@ public class JdbcMovieDao implements MovieDao {
         logger.info("Start processing query to get all movies ordered by column: {} and direction is: {}", requestParameter.getFieldName(), requestParameter.getSortDirection());
         long startTime = System.currentTimeMillis();
 
-        String sql = generateSql(requestParameter);
+        String getAllOrderedMovieSql = generateSql(requestParameter);
 
-        List<Movie> movies = jdbcTemplate.query(sql, MOVIE_ROW_MAPPER);
+        List<Movie> movies = namedParameterJdbcTemplate.query(getAllOrderedMovieSql, MOVIE_ROW_MAPPER);
 
         logger.info("Finish processing query to get all movies ordered by column: {} and direction is: {}. It took {} ms", requestParameter.getFieldName(), requestParameter.getSortDirection(), System.currentTimeMillis() - startTime);
         return movies;
@@ -57,7 +55,7 @@ public class JdbcMovieDao implements MovieDao {
         logger.info("Start processing query to get 3 random movies");
         long startTime = System.currentTimeMillis();
 
-        List<Movie> movies = jdbcTemplate.query(GET_THREE_RANDOM_MOVIE_SQL, MOVIE_ROW_MAPPER);
+        List<Movie> movies = namedParameterJdbcTemplate.query(GET_THREE_RANDOM_MOVIE_SQL, MOVIE_ROW_MAPPER);
 
         logger.info("Finish processing query to get 3 random movies. It took {} ms", System.currentTimeMillis() - startTime);
         return movies;
@@ -82,7 +80,7 @@ public class JdbcMovieDao implements MovieDao {
         logger.info("Start processing query to get all movies");
         long startTime = System.currentTimeMillis();
 
-        List<Movie> movies = jdbcTemplate.query(GET_ALL_MOVIE_SQL, MOVIE_ROW_MAPPER);
+        List<Movie> movies = namedParameterJdbcTemplate.query(GET_ALL_MOVIE_SQL, MOVIE_ROW_MAPPER);
 
         logger.info("Finish processing query to get all movies. It took {} ms", System.currentTimeMillis() - startTime);
         return movies;
@@ -115,21 +113,16 @@ public class JdbcMovieDao implements MovieDao {
         logger.info("Start processing query to update movie with id = {}", movie.getId());
         long startTime = System.currentTimeMillis();
 
-        jdbcTemplate.update(UPDATE_MOVIE_SQL,
-                movie.getNameRussian(),
-                movie.getNameNative(),
-                movie.getYearOfRelease(),
-                movie.getDescription(),
-                movie.getRating(),
-                movie.getPrice(),
-                movie.getPicturePath(),
-                movie.getId());
+        MapSqlParameterSource sqlParameterSource = getParameterSource(movie);
+
+        namedParameterJdbcTemplate.update(UPDATE_MOVIE_SQL,sqlParameterSource);
 
         logger.info("Finish processing query to update movie. It took {} ms", System.currentTimeMillis() - startTime);
     }
 
     private MapSqlParameterSource getParameterSource(Movie movie) {
         MapSqlParameterSource parameterSource = new MapSqlParameterSource();
+        parameterSource.addValue("id", movie.getId());
         parameterSource.addValue("nameRussian", movie.getNameRussian());
         parameterSource.addValue("nameNative", movie.getNameNative());
         parameterSource.addValue("yearOfRelease", movie.getYearOfRelease());

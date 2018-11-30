@@ -1,7 +1,7 @@
 package com.gordeev.movieland.dao.jdbc.mapper
 
 import com.gordeev.movieland.entity.User
-import com.gordeev.movieland.vo.UserRole
+import com.gordeev.movieland.entity.UserRole
 
 import java.sql.ResultSet
 

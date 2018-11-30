@@ -1,8 +1,8 @@
 package com.gordeev.movieland.service;
 
 import com.gordeev.movieland.entity.Movie;
-import com.gordeev.movieland.vo.Currency;
-import com.gordeev.movieland.vo.RequestParameter;
+import com.gordeev.movieland.entity.Currency;
+import com.gordeev.movieland.entity.RequestParameter;
 
 import java.util.List;
 

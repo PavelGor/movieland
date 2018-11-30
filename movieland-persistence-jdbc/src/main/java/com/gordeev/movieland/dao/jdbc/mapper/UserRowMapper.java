@@ -1,13 +1,14 @@
 package com.gordeev.movieland.dao.jdbc.mapper;
 
 import com.gordeev.movieland.entity.User;
-import com.gordeev.movieland.vo.UserRole;
+import com.gordeev.movieland.entity.UserRole;
 import org.springframework.jdbc.core.RowMapper;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class UserRowMapper implements RowMapper<User> {
+
     @Override
     public User mapRow(ResultSet resultSet, int rowNum) throws SQLException {
         User user = new User();

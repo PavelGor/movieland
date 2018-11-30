@@ -5,5 +5,5 @@
 *.ear
 target/
 *.iml
-*.log
+*.log*
 logs/*

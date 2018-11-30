@@ -1,7 +1,7 @@
 package com.gordeev.movieland.dao.jdbc.extractor
 
 import com.gordeev.movieland.entity.Country
-import com.gordeev.movieland.vo.MovieToCountiesVo
+import com.gordeev.movieland.vo.MovieToCountiesVO
 import org.junit.Test
 import org.springframework.jdbc.core.ResultSetExtractor
 
@@ -23,7 +23,7 @@ class MovieCountriesExtractorTest extends GroovyTestCase {
 
     @Test
     void testExtractData() throws SQLException {
-        ResultSetExtractor<List<MovieToCountiesVo>> movieGenresExtractor = new MovieCountriesExtractor()
+        ResultSetExtractor<List<MovieToCountiesVO>> movieGenresExtractor = new MovieCountriesExtractor()
 
         ResultSet resultSet = mock(ResultSet.class)
         when(resultSet.next()).thenReturn(true).thenReturn(true).thenReturn(true).thenReturn(false)
@@ -39,9 +39,9 @@ class MovieCountriesExtractorTest extends GroovyTestCase {
         countries.add(secondCountry)
         countries.add(thirdCountry)
 
-        List<MovieToCountiesVo> countryVOList = movieGenresExtractor.extractData(resultSet)
+        List<MovieToCountiesVO> countryVOList = movieGenresExtractor.extractData(resultSet)
 
-        MovieToCountiesVo expectedCountryVO = countryVOList.get(0)
+        MovieToCountiesVO expectedCountryVO = countryVOList.get(0)
 
         assertTrue(countryVOList.size() == 1)
         assertEquals(id, expectedCountryVO.getMovieId())

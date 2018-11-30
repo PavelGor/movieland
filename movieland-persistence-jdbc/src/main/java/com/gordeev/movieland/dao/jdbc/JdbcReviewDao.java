@@ -8,23 +8,25 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
 @Repository
 public class JdbcReviewDao implements ReviewDao {
-    private static final String GET_REVIEWS_BY_MOVIEID_SQL = "SELECT * FROM review WHERE movie_id = ?";
-    private static final String ADD_REVIEW_SQL = "INSERT INTO review (movie_id, user_id, text) values (?, ?, ?);";
+    private static final String GET_REVIEWS_BY_MOVIEID_SQL = "SELECT * FROM review WHERE movie_id = :movieId";
+    private static final String ADD_REVIEW_SQL = "INSERT INTO review (movie_id, user_id, text) values (:movieId, :userId, :text);";
 
     private final Logger logger = LoggerFactory.getLogger(getClass());
     private static final RowMapper<Review> REVIEW_ROW_MAPPER = new ReviewRowMapper();
 
-    private JdbcTemplate jdbcTemplate;
+    private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
     @Autowired
-    public JdbcReviewDao(JdbcTemplate jdbcTemplate) {
-        this.jdbcTemplate = jdbcTemplate;
+    public JdbcReviewDao(NamedParameterJdbcTemplate namedParameterJdbcTemplate) {
+        this.namedParameterJdbcTemplate = namedParameterJdbcTemplate;
     }
 
     @Override
@@ -32,7 +34,10 @@ public class JdbcReviewDao implements ReviewDao {
         logger.info("Start processing query to get reviews with moviesId: {}", movieId);
         long startTime = System.currentTimeMillis();
 
-        List<Review> movies = jdbcTemplate.query(GET_REVIEWS_BY_MOVIEID_SQL, REVIEW_ROW_MAPPER, movieId);
+        MapSqlParameterSource parameters = new MapSqlParameterSource();
+        parameters.addValue("movieId", movieId);
+
+        List<Review> movies = namedParameterJdbcTemplate.query(GET_REVIEWS_BY_MOVIEID_SQL, parameters, REVIEW_ROW_MAPPER);
 
         logger.info("Finish processing query to get reviews with moviesId: {}. It took {} ms", movieId, System.currentTimeMillis() - startTime);
         return movies;
@@ -43,7 +48,12 @@ public class JdbcReviewDao implements ReviewDao {
         logger.info("Start inserting query to add review: {}", review);
         long startTime = System.currentTimeMillis();
 
-        jdbcTemplate.update(ADD_REVIEW_SQL, review.getMovieId(), review.getUser().getId(), review.getText());
+        MapSqlParameterSource parameters = new MapSqlParameterSource();
+        parameters.addValue("movieId", review.getMovieId());
+        parameters.addValue("userId", review.getUser().getId());
+        parameters.addValue("text", review.getText());
+
+        namedParameterJdbcTemplate.update(ADD_REVIEW_SQL, parameters);
 
         logger.info("Finish processing query to add review: {} . It took {} ms", review, System.currentTimeMillis() - startTime);
     }

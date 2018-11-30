@@ -1,7 +1,7 @@
 package com.gordeev.movieland.dao.jdbc.extractor;
 
 import com.gordeev.movieland.entity.Country;
-import com.gordeev.movieland.vo.MovieToCountiesVo;
+import com.gordeev.movieland.vo.MovieToCountiesVO;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.ResultSetExtractor;
 
@@ -12,26 +12,26 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class MovieCountriesExtractor implements ResultSetExtractor<List<MovieToCountiesVo>> {
+public class MovieCountriesExtractor implements ResultSetExtractor<List<MovieToCountiesVO>> {
     @Override
-    public List<MovieToCountiesVo> extractData(ResultSet resultSet) throws DataAccessException, SQLException {
-        Map<Integer, MovieToCountiesVo> MovieToCountiesVoMap = new HashMap<>();
-        MovieToCountiesVo MovieToCountiesVo;
+    public List<MovieToCountiesVO> extractData(ResultSet resultSet) throws DataAccessException, SQLException {
+        Map<Integer, MovieToCountiesVO> MovieToCountiesVoMap = new HashMap<>();
+        MovieToCountiesVO MovieToCountiesVO;
         List<Country> countries = new ArrayList<>();
 
         while (resultSet.next()) {
             int currentMovieId = resultSet.getInt("movie_id");
 
-            MovieToCountiesVo = MovieToCountiesVoMap.get(currentMovieId);
+            MovieToCountiesVO = MovieToCountiesVoMap.get(currentMovieId);
 
-            if (MovieToCountiesVo == null) {
-                MovieToCountiesVo = new MovieToCountiesVo();
+            if (MovieToCountiesVO == null) {
+                MovieToCountiesVO = new MovieToCountiesVO();
                 countries = new ArrayList<>();
 
-                MovieToCountiesVo.setMovieId(currentMovieId);
-                MovieToCountiesVo.setCountries(countries);
+                MovieToCountiesVO.setMovieId(currentMovieId);
+                MovieToCountiesVO.setCountries(countries);
 
-                MovieToCountiesVoMap.put(currentMovieId, MovieToCountiesVo);
+                MovieToCountiesVoMap.put(currentMovieId, MovieToCountiesVO);
             }
             Country country = new Country(resultSet.getInt("id"), resultSet.getString("name"));
             countries.add(country);

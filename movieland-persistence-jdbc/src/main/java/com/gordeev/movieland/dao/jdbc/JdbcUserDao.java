@@ -19,18 +19,16 @@ import java.util.Set;
 @Repository
 public class JdbcUserDao implements UserDao {
     private static final String GET_USERS_BY_IDS_SQL = "SELECT * FROM USERS WHERE id IN (:userIds)";
-    private static final String GET_USER_BY_EMAIL_SQL = "SELECT * FROM USERS WHERE email = ?";
+    private static final String GET_USER_BY_EMAIL_SQL = "SELECT * FROM USERS WHERE email = :email";
 
     private static final RowMapper<User> USER_ROW_MAPPER = new UserRowMapper();
     private final Logger logger = LoggerFactory.getLogger(getClass());
 
     private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
-    private JdbcTemplate jdbcTemplate;
 
     @Autowired
-    public JdbcUserDao(NamedParameterJdbcTemplate namedParameterJdbcTemplate, JdbcTemplate jdbcTemplate) {
+    public JdbcUserDao(NamedParameterJdbcTemplate namedParameterJdbcTemplate) {
         this.namedParameterJdbcTemplate = namedParameterJdbcTemplate;
-        this.jdbcTemplate = jdbcTemplate;
     }
 
     @Override
@@ -49,11 +47,15 @@ public class JdbcUserDao implements UserDao {
 
     @Override
     public User getUserByEmail(String email) {
+        logger.info("Start processing query to get user by email - {}.", email);
         long startTime = System.currentTimeMillis();
 
-        User user = jdbcTemplate.queryForObject(GET_USER_BY_EMAIL_SQL, USER_ROW_MAPPER, email);
+        MapSqlParameterSource parameters = new MapSqlParameterSource();
+        parameters.addValue("email", email);
 
-        logger.info("Finish processing query to get user by email. It took {} ms", System.currentTimeMillis() - startTime);
+        User user = namedParameterJdbcTemplate.queryForObject(GET_USER_BY_EMAIL_SQL, parameters, USER_ROW_MAPPER);
+
+        logger.info("Finish processing query to get user by email - {}. It took {} ms", email, System.currentTimeMillis() - startTime);
         return user;
     }
 }

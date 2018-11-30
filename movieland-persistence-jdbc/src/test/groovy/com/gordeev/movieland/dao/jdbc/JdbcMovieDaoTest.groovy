@@ -2,8 +2,8 @@ package com.gordeev.movieland.dao.jdbc
 
 import com.gordeev.movieland.dao.MovieDao
 import com.gordeev.movieland.entity.Movie
-import com.gordeev.movieland.vo.RequestParameter
-import com.gordeev.movieland.vo.SortDirection
+import com.gordeev.movieland.entity.RequestParameter
+import com.gordeev.movieland.entity.SortDirection
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith

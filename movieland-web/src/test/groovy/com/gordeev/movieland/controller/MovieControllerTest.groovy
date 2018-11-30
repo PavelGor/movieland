@@ -2,11 +2,13 @@ package com.gordeev.movieland.controller
 
 import com.gordeev.movieland.entity.Movie
 import com.gordeev.movieland.entity.User
+import com.gordeev.movieland.service.MovieService
 import com.gordeev.movieland.service.SecurityService
-import com.gordeev.movieland.vo.UserRole
+import com.gordeev.movieland.entity.UserRole
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.mockito.InjectMocks
 import org.mockito.Mock
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.MediaType
@@ -30,15 +32,22 @@ class MovieControllerTest extends GroovyTestCase {
 
     private MockMvc mockMvc
 
+    private MockMvc mockMvcReal
+
     @Autowired
+    private MovieController movieController
+    @InjectMocks
     private MovieController controller
     @Mock
     private SecurityService securityService
+    @Mock
+    private MovieService movieService
 
     @Before
     void setup() {
         initMocks(this)
-        this.mockMvc = MockMvcBuilders.standaloneSetup(controller).build()
+        mockMvc = MockMvcBuilders.standaloneSetup(controller).build()
+        mockMvcReal = MockMvcBuilders.standaloneSetup(movieController).build()
 
         //List of movies setUp
         expectedMovies = new ArrayList<>()
@@ -76,45 +85,21 @@ class MovieControllerTest extends GroovyTestCase {
 
     @Test
     void testGetThreeRandomMovie() throws Exception {
-        mockMvc.perform(get("/movie/random"))
+        mockMvcReal.perform(get("/movie/random"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("\$", hasSize(3)))
 
     }
 
     @Test
-    void getMovieByGenre() throws Exception {
+    void testGetMovieByGenre() throws Exception {
         checkJson("/movie/genre/1", 16)
     }
 
-    private void checkJson(String link, int size) throws Exception {
-        Movie expectedFirstMovie = expectedMovies.get(0)
-        Movie expectedSecondMovie = expectedMovies.get(1)
-        mockMvc.perform(get(link))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("\$", hasSize(size)))
-                .andExpect(jsonPath("\$[0].id", is(expectedFirstMovie.getId())))
-                .andExpect(jsonPath("\$[0].nameRussian", is(expectedFirstMovie.getNameRussian())))
-                .andExpect(jsonPath("\$[0].nameNative", is(expectedFirstMovie.getNameNative())))
-                .andExpect(jsonPath("\$[0].yearOfRelease", is(expectedFirstMovie.getYearOfRelease())))
-                .andExpect(jsonPath("\$[0].description", is(expectedFirstMovie.getDescription())))
-                .andExpect(jsonPath("\$[0].rating", is(expectedFirstMovie.getRating())))
-                .andExpect(jsonPath("\$[0].price", is(expectedFirstMovie.getPrice())))
-                .andExpect(jsonPath("\$[0].picturePath", is(expectedFirstMovie.getPicturePath())))
-                .andExpect(jsonPath("\$[5].id", is(expectedSecondMovie.getId())))
-                .andExpect(jsonPath("\$[5].nameRussian", is(expectedSecondMovie.getNameRussian())))
-                .andExpect(jsonPath("\$[5].nameNative", is(expectedSecondMovie.getNameNative())))
-                .andExpect(jsonPath("\$[5].yearOfRelease", is(expectedSecondMovie.getYearOfRelease())))
-                .andExpect(jsonPath("\$[5].description", is(expectedSecondMovie.getDescription())))
-                .andExpect(jsonPath("\$[5].rating", is(expectedSecondMovie.getRating())))
-                .andExpect(jsonPath("\$[5].price", is(expectedSecondMovie.getPrice())))
-                .andExpect(jsonPath("\$[5].picturePath", is(expectedSecondMovie.getPicturePath())))
-    }
-
     @Test
-    void getMovieById() {
+    void testGetMovieById() {
         Movie expectedFirstMovie = expectedMovies.get(0)
-        mockMvc.perform(get("/movie/1"))
+        mockMvcReal.perform(get("/movie/1"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("id", is(expectedFirstMovie.getId())))
                 .andExpect(jsonPath("nameRussian", is(expectedFirstMovie.getNameRussian())))
@@ -136,8 +121,8 @@ class MovieControllerTest extends GroovyTestCase {
         user.setUserRole(UserRole.ADMIN)
 
         String json = "{\n" +
-                "     \"nameRussian\": \"Побег из Шоушенка\",\n" +
-                "     \"nameNative\": \"The Shawshank Redemption\",\n" +
+                "     \"nameRussian\": \"Побег из\",\n" +
+                "     \"nameNative\": \"The Shawshank\",\n" +
                 "     \"yearOfRelease\": \"1994\",\n" +
                 "     \"description\": \"Успешный банкир Энди Дюфрейн обвинен в убийстве собственной жены и ее любовника. Оказавшись в тюрьме под названием Шоушенк, он сталкивается с жестокостью и беззаконием, царящими по обе стороны решетки. Каждый, кто попадает в эти стены, становится их рабом до конца жизни. Но Энди, вооруженный живым умом и доброй душой, отказывается мириться с приговором судьбы и начинает разрабатывать невероятно дерзкий план своего освобождения.\",\n" +
                 "     \"price\": 123.45,\n" +
@@ -147,6 +132,7 @@ class MovieControllerTest extends GroovyTestCase {
                 "}"
 
         String uuid = "987654321"
+
         doReturn(user).when(securityService).getUser(uuid)
 
         mockMvc.perform(post("/movie/")
@@ -154,10 +140,6 @@ class MovieControllerTest extends GroovyTestCase {
                 .header("uuid", uuid)
                 .content(json)
         ).andExpect(status().isOk())
-
-        this.mockMvc.perform(get("/movie"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("\$", hasSize(25)))
     }
 
     @Test
@@ -184,10 +166,29 @@ class MovieControllerTest extends GroovyTestCase {
                 .header("uuid", uuid)
                 .content(json)
         ).andExpect(status().isOk())
+    }
 
-        this.mockMvc.perform(get("/movie"))
+    private void checkJson(String link, int size) throws Exception {
+        Movie expectedFirstMovie = expectedMovies.get(0)
+        Movie expectedSecondMovie = expectedMovies.get(1)
+        mockMvcReal.perform(get(link))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("\$", hasSize(25)))
-                .andExpect(jsonPath("\$[0].nameRussian", is("Побег из Шоушенка")))
+                .andExpect(jsonPath("\$", hasSize(size)))
+                .andExpect(jsonPath("\$[0].id", is(expectedFirstMovie.getId())))
+                .andExpect(jsonPath("\$[0].nameRussian", is(expectedFirstMovie.getNameRussian())))
+                .andExpect(jsonPath("\$[0].nameNative", is(expectedFirstMovie.getNameNative())))
+                .andExpect(jsonPath("\$[0].yearOfRelease", is(expectedFirstMovie.getYearOfRelease())))
+                .andExpect(jsonPath("\$[0].description", is(expectedFirstMovie.getDescription())))
+                .andExpect(jsonPath("\$[0].rating", is(expectedFirstMovie.getRating())))
+                .andExpect(jsonPath("\$[0].price", is(expectedFirstMovie.getPrice())))
+                .andExpect(jsonPath("\$[0].picturePath", is(expectedFirstMovie.getPicturePath())))
+                .andExpect(jsonPath("\$[5].id", is(expectedSecondMovie.getId())))
+                .andExpect(jsonPath("\$[5].nameRussian", is(expectedSecondMovie.getNameRussian())))
+                .andExpect(jsonPath("\$[5].nameNative", is(expectedSecondMovie.getNameNative())))
+                .andExpect(jsonPath("\$[5].yearOfRelease", is(expectedSecondMovie.getYearOfRelease())))
+                .andExpect(jsonPath("\$[5].description", is(expectedSecondMovie.getDescription())))
+                .andExpect(jsonPath("\$[5].rating", is(expectedSecondMovie.getRating())))
+                .andExpect(jsonPath("\$[5].price", is(expectedSecondMovie.getPrice())))
+                .andExpect(jsonPath("\$[5].picturePath", is(expectedSecondMovie.getPicturePath())))
     }
 }

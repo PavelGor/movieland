@@ -1,7 +1,6 @@
 package com.gordeev.movieland.entity;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.gordeev.movieland.vo.UserRole;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class User {

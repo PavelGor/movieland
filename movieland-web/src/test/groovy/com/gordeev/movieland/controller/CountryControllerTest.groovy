@@ -30,7 +30,7 @@ class CountryControllerTest extends GroovyTestCase {
     @Before
     void setup() {
         initMocks(this)
-        this.mockMvc = MockMvcBuilders.standaloneSetup(countryController).build()
+        mockMvc = MockMvcBuilders.standaloneSetup(countryController).build()
     }
     @Test
     void testGetAllCountries() {

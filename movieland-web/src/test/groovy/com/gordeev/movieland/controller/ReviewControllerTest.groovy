@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.gordeev.movieland.entity.Review
 import com.gordeev.movieland.entity.User
 import com.gordeev.movieland.service.SecurityService
-import com.gordeev.movieland.vo.UserRole
+import com.gordeev.movieland.entity.UserRole
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -17,13 +17,11 @@ import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.setup.MockMvcBuilders
 
 import static org.hamcrest.Matchers.hasSize
-import static org.hamcrest.Matchers.is
 import static org.mockito.Mockito.mock
 import static org.mockito.Mockito.when
 import static org.mockito.MockitoAnnotations.initMocks
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
@@ -44,8 +42,8 @@ class ReviewControllerTest extends GroovyTestCase {
     @Before
     void setup() {
         initMocks(this)
-        this.mockMvcReview = MockMvcBuilders.standaloneSetup(reviewController).build()
-        this.mockMvcMovie = MockMvcBuilders.standaloneSetup(movieController).build()
+        mockMvcReview = MockMvcBuilders.standaloneSetup(reviewController).build()
+        mockMvcMovie = MockMvcBuilders.standaloneSetup(movieController).build()
     }
 
     @Test
@@ -63,10 +61,10 @@ class ReviewControllerTest extends GroovyTestCase {
         SecurityService securityService = mock(SecurityService.class)
         when(securityService.getUser(uuid)).thenReturn(user)
 
-        this.mockMvcReview.perform(post("/review")
+        mockMvcReview.perform(post("/review")
                 .contentType(MediaType.APPLICATION_JSON).content(json))
 
-        this.mockMvcMovie.perform(get("/movie/1"))
+        mockMvcMovie.perform(get("/movie/1"))
                 .andExpect(status().isOk())
 //                .andExpect(jsonPath("reviews[2].text", is("Очень понравилось!")))
                 .andExpect(jsonPath("reviews", hasSize(2)))

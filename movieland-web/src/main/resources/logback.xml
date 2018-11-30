@@ -10,13 +10,13 @@
         </rollingPolicy>
 
         <encoder>
-            <pattern>%d{dd-MM-yyyy HH:mm:ss.SSS} [%thread] %-5level %X{requestId} %X{user} %X{role} %logger{36}.%M - %msg%n</pattern>
+            <pattern>%d{dd-MM-yyyy HH:mm:ss.SSS} [%thread] %X{requestId} %X{user} %X{role} %-5level %logger{36}.%M - %msg%n</pattern>
         </encoder>
     </appender>
 
     <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
-            <pattern>%d{dd-MM-yyyy HH:mm:ss.SSS} [%thread] %-5level %X{requestId} %X{user} %X{role} %logger{36}.%M - %msg%n</pattern>
+            <pattern>%d{dd-MM-yyyy HH:mm:ss.SSS} [%thread] %X{requestId} %X{user} %X{role} %-5level %logger{36}.%M - %msg%n</pattern>
         </encoder>
     </appender>
 

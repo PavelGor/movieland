@@ -20,7 +20,7 @@ public class CountryController {
     }
 
     @RequestMapping(method = RequestMethod.GET)
-    protected List<Country> getAllGenre() {
+    public List<Country> getAllGenre() {
         return countryService.getAll();
     }
 }

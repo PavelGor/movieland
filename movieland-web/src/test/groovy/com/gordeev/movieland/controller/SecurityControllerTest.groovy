@@ -33,7 +33,7 @@ class SecurityControllerTest extends GroovyTestCase {
     @Before
     void setup() {
         initMocks(this)
-        this.mockMvc = MockMvcBuilders.standaloneSetup(securityController).build()
+        mockMvc = MockMvcBuilders.standaloneSetup(securityController).build()
     }
 
     @Test
@@ -43,7 +43,7 @@ class SecurityControllerTest extends GroovyTestCase {
         user.setPassword("paco")
         String json = mapper.writeValueAsString(user)
 
-        this.mockMvc.perform(post("/login")
+        mockMvc.perform(post("/login")
                 .contentType(MediaType.APPLICATION_JSON).content(json))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("nickname", is("Рональд Рейнольдс")))
@@ -56,7 +56,7 @@ class SecurityControllerTest extends GroovyTestCase {
 
         String json = mapper.writeValueAsString(user)
 
-        this.mockMvc.perform(delete("/logout")
+        mockMvc.perform(delete("/logout")
                 .contentType(MediaType.APPLICATION_JSON).content(json))
                 .andExpect(status().isBadRequest())
     }

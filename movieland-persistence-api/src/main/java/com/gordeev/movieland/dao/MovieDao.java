@@ -1,7 +1,7 @@
 package com.gordeev.movieland.dao;
 
 import com.gordeev.movieland.entity.Movie;
-import com.gordeev.movieland.vo.RequestParameter;
+import com.gordeev.movieland.entity.RequestParameter;
 
 import java.util.List;
 
