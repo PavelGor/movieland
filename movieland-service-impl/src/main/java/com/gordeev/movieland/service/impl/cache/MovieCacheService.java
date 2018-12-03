@@ -18,7 +18,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 @Primary
 @Service
-public class MovieCache implements MovieService{
+public class MovieCacheService implements MovieService{
     private final Logger logger = LoggerFactory.getLogger(getClass());
 
     private MovieService movieService;
@@ -27,9 +27,47 @@ public class MovieCache implements MovieService{
     private final Map<Integer, SoftReference<Movie>> movieCache = new ConcurrentHashMap<>();
 
     @Autowired
-    public MovieCache(MovieService movieService, ExchangeRateService exchangeRateService) {
+    public MovieCacheService(MovieService movieService, ExchangeRateService exchangeRateService) {
         this.movieService = movieService;
         this.exchangeRateService = exchangeRateService;
+    }
+
+    @Override
+    public Movie getMovieById(int movieId, Currency currency) {
+        logger.info("Start getting movie from cache by movieId: {}", movieId);
+
+        Movie movie;
+        SoftReference<Movie> movieSoftReference =  movieCache.get(movieId);
+        if (movieSoftReference != null){
+            movie = movieSoftReference.get();
+            if (movie == null){
+                movie = movieService.getMovieById(movieId, currency);
+                movieCache.put(movieId, new SoftReference<>(movie));
+            }
+        } else {
+            movie = movieService.getMovieById(movieId, currency);
+            movieCache.put(movieId, new SoftReference<>(movie));
+        }
+
+        if (currency != Currency.UAH) {
+            Map<Currency, Double> exchangeRatesMap = exchangeRateService.getExchangeRatesMap();
+            double rate = exchangeRatesMap.get(currency);
+            movie.setPrice(movie.getPrice() / rate);
+        }
+
+        logger.info("Finished getting movie from cache by movieId: {}", movieId);
+        return movie;
+    }
+
+    @Override
+    public void update(Movie movie) {
+        movieService.update(movie);
+
+        int key = movie.getId();
+        if (movieCache.containsKey(key)){
+            movieCache.put(key, new SoftReference<>(movie));
+            logger.info("updated movie info in cache, movieId: {}", movie.getId());
+        }
     }
 
     @Override
@@ -53,42 +91,7 @@ public class MovieCache implements MovieService{
     }
 
     @Override
-    public Movie getMovieById(int movieId, Currency currency) {
-        logger.info("Start getting movie from cache by movieId: {}", movieId);
-        long startTime = System.currentTimeMillis();
-
-        Movie movie;
-        SoftReference<Movie> movieSoftReference =  movieCache.get(movieId);
-        if (movieSoftReference == null){
-            movie = movieService.getMovieById(movieId, currency);
-            movieCache.put(movieId, new SoftReference<>(movie));
-        } else {
-            movie = movieSoftReference.get();
-        }
-
-        if (currency != Currency.UAH) {
-            Map<Currency, Double> exchangeRatesMap = exchangeRateService.getExchangeRatesMap();
-            double rate = exchangeRatesMap.get(currency);
-            movie.setPrice(movie.getPrice() / rate); //TODO: ask Tolik: why?
-        }
-
-        logger.info("Finished getting movie from cache by movieId. Time: {}", System.currentTimeMillis() - startTime);
-        return movie;
-    }
-
-    @Override
     public void add(Movie movie) {
         movieService.add(movie);
-    }
-
-    @Override
-    public void update(Movie movie) {
-        int key = movie.getId();
-        if (movieCache.containsKey(key)){
-            movieCache.put(key, new SoftReference<>(movie));
-            logger.info("updated movie info in cache, movieId: {}", movie.getId());
-        }
-
-        movieService.update(movie);
     }
 }
