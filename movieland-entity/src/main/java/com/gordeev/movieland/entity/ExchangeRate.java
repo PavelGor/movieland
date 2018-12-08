@@ -3,18 +3,19 @@ package com.gordeev.movieland.entity;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class ExchangeRate {
-    private String ccy;
+    @JsonProperty("ccy")
+    private String currency;
     @JsonProperty("base_ccy")
     private String baseCurrency;
     private String buy;
     private String sale;
 
-    public String getCcy() {
-        return ccy;
+    public String getCurrency() {
+        return currency;
     }
 
-    public void setCcy(String ccy) {
-        this.ccy = ccy;
+    public void setCurrency(String currency) {
+        this.currency = currency;
     }
 
     public String getBaseCurrency() {

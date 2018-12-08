@@ -17,6 +17,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.concurrent.ConcurrentHashMap;
 
 @Service
 public class ExchangeRateService {
@@ -35,7 +36,7 @@ public class ExchangeRateService {
         try {
             logger.info("Start to get exchange rate from Bank");
 
-            exchangeRatesMap = new HashMap<>();
+            exchangeRatesMap = new ConcurrentHashMap<>();
             URL urlObject = new URL(urlForExchangeRate);
             HttpURLConnection httpURLConnection = (HttpURLConnection) urlObject.openConnection();
             httpURLConnection.setRequestMethod("GET");
@@ -46,16 +47,17 @@ public class ExchangeRateService {
 
             for (ExchangeRate rate : exchangeRates) {
                 if (Currency.UAH.getName().equals(rate.getBaseCurrency())) {
-                    if (Currency.USD.getName().equals(rate.getCcy())) {
+                    if (Currency.USD.getName().equals(rate.getCurrency())) {
                         exchangeRatesMap.put(Currency.USD, Double.parseDouble(rate.getSale()));
                     }
-                    if (Currency.EUR.getName().equals(rate.getCcy())) {
+                    if (Currency.EUR.getName().equals(rate.getCurrency())) {
                         exchangeRatesMap.put(Currency.EUR, Double.parseDouble(rate.getSale()));
                     }
                     exchangeRatesMap.put(Currency.UAH, 1.0);
                 }
             }
 
+            inputStream.close();
             logger.info("Exchange rate from Bank received");
         } catch (IOException e) {
             logger.error("Cannot get exchange rate from Bank", e);
