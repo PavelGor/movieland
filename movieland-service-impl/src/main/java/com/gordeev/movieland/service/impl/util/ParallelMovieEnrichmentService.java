@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.*;
 
@@ -20,29 +21,27 @@ public class ParallelMovieEnrichmentService {
     private ReviewService reviewService;
     private GenreService genreService;
     private CountryService countryService;
-    private Executor threadPoolExecutor;
+    private ExecutorService executorService;
 
     public void enrich(List<Movie> movies) {
 
-        CompletableFuture<Void> countries = CompletableFuture.runAsync(() -> countryService.enrich(movies), threadPoolExecutor);
-        CompletableFuture<Void> genres = CompletableFuture.runAsync(() -> genreService.enrich(movies), threadPoolExecutor);
+        Collection<Callable<Boolean>> tasks = new CopyOnWriteArrayList<>();
 
-        Movie movie = movies.get(0);
-        CompletableFuture<Void> reviews = CompletableFuture
-                .supplyAsync(() -> reviewService.getByMovieId(movie.getId()), threadPoolExecutor)
-                .thenAccept(movie::setReviews);
-
-        CompletableFuture<Void> future = CompletableFuture.allOf(countries, genres, reviews);
         try {
-            future.get(enrichTimeout, TimeUnit.SECONDS);
-            logger.info("Parallel movie data enricher has worked");
-
-        } catch (InterruptedException | ExecutionException e) {
-            logger.error("Parallel movie data enricher failed during execution", e);
-
-        } catch (TimeoutException e) {
-            logger.warn("Parallel movie data enricher was unable to finish in {} seconds", enrichTimeout);
-            throw new RuntimeException("Parallel movie data enricher was unable to finish", e);
+            Callable<Boolean> genre = () -> genreService.enrich(movies);
+            Callable<Boolean> country = () -> countryService.enrich(movies);
+            Callable<Boolean> review = () -> reviewService.enrich(movies);
+            tasks.add(country);
+            tasks.add(genre);
+            tasks.add(review);
+            List<Future<Boolean>> futures = executorService.invokeAll(tasks, enrichTimeout, TimeUnit.SECONDS);
+            for (Future<Boolean> future : futures) {
+                if (future.isCancelled()) {
+                    logger.warn("Parallel movie data enricher was unable to finish in {} seconds", enrichTimeout);
+                }
+            }
+        } catch (InterruptedException e) {
+            logger.warn("Parallel movie data enricher failed during execution", e);
         }
     }
 
@@ -62,8 +61,8 @@ public class ParallelMovieEnrichmentService {
     }
 
     @Autowired
-    public void setThreadPoolExecutor(Executor threadPoolExecutor) {
-        this.threadPoolExecutor = threadPoolExecutor;
+    public void setExecutorService(ExecutorService executorService) {
+        this.executorService = executorService;
     }
 
     @Value("${enrichMovie.timeOut}")

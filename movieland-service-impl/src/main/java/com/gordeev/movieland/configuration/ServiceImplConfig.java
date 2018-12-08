@@ -4,14 +4,18 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Scope;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import javax.sql.DataSource;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
+
+import static java.util.concurrent.Executors.newCachedThreadPool;
 
 @Configuration
 @EnableTransactionManagement
@@ -33,8 +37,8 @@ public class ServiceImplConfig {
     }
 
     @Bean
-    public ThreadPoolExecutor threadPoolExecutor() {
-        return new ThreadPoolExecutor(3,3, enrichTimeout, TimeUnit.SECONDS, new LinkedBlockingQueue<>());
+    public ExecutorService executorService() {
+        return newCachedThreadPool();
     }
 
     @Value("${enrichMovie.timeOut}")

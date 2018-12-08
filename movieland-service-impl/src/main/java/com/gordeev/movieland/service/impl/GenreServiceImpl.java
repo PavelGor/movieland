@@ -28,11 +28,13 @@ public class GenreServiceImpl implements GenreService {
     }
 
     @Override
-    public void enrich(List<Movie> movies) {
+    public boolean enrich(List<Movie> movies) {
         List<Integer> moviesIds = new ArrayList<>();
         for (Movie movie : movies) {
             moviesIds.add(movie.getId());
         }
+
+        if(Thread.currentThread().isInterrupted()) { return false; }
 
         List<MovieToGenresVO> genresForMoviesVO = genreDao.getGenresForMovies(moviesIds);
         Map<Integer, List<Genre>> genresForMoviesMap = new HashMap<>();
@@ -40,10 +42,13 @@ public class GenreServiceImpl implements GenreService {
             genresForMoviesMap.put(movieToGenresVO.getMovieId(), movieToGenresVO.getGenres());
         }
 
+        if(Thread.currentThread().isInterrupted()) { return false; }
+
         for (Movie movie : movies) {
             int movieId = movie.getId();
             movie.setGenres(genresForMoviesMap.get(movieId));
         }
+        return true;
     }
 
     @Override

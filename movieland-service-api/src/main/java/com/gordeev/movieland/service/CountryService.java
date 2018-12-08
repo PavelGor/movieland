@@ -9,7 +9,7 @@ public interface CountryService {
 
     List<Country> getAll();
 
-    void enrich(List<Movie> movies);
+    boolean enrich(List<Movie> movies);
 
     void addToMovie(Movie movie);
 
