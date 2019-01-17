@@ -9,7 +9,7 @@ public interface GenreService {
 
     List<Genre> getAll();
 
-    void enrich(List<Movie> movies);
+    boolean enrich(List<Movie> movies);
 
     List<Integer> getMoviesIdsByGenreId(int genreId);
 

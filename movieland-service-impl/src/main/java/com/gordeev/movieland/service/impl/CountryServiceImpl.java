@@ -28,11 +28,13 @@ public class CountryServiceImpl implements CountryService {
     }
 
     @Override
-    public void enrich(List<Movie> movies) {
+    public boolean enrich(List<Movie> movies) {
         List<Integer> moviesIds = new ArrayList<>();
         for (Movie movie : movies) {
             moviesIds.add(movie.getId());
         }
+
+        if(Thread.currentThread().isInterrupted()) { return false; }
 
         List<MovieToCountiesVO> countriesForMoviesVO = countryDao.getCountriesForMovies(moviesIds);
         Map<Integer, List<Country>> countriesForMoviesMap = new HashMap<>();
@@ -40,10 +42,14 @@ public class CountryServiceImpl implements CountryService {
             countriesForMoviesMap.put(movieToCountiesVO.getMovieId(), movieToCountiesVO.getCountries());
         }
 
+        if(Thread.currentThread().isInterrupted()) { return false; }
+
         for (Movie movie : movies) {
             int movieId = movie.getId();
             movie.setCountries(countriesForMoviesMap.get(movieId));
         }
+
+        return true;
     }
 
     @Override
