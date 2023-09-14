@@ -23,7 +23,7 @@
         <javax.servlet.version>4.0.1</javax.servlet.version>
         <postgresql.version>9.1-901-1.jdbc4</postgresql.version>
         <commons-dbcp.version>1.4</commons-dbcp.version>
-        <jackson.version>2.9.5</jackson.version>
+        <jackson.version>2.9.10.4</jackson.version>
         <logback.version>1.2.3</logback.version>
         <groovy.version>2.4.7</groovy.version>
         <junit.version>4.12</junit.version>
